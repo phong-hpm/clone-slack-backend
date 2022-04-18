@@ -1,0 +1,34 @@
+{
+  "name": "chat-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "ACCESS_TOKEN_SECRET=secret ACCESS_TOKEN_LIFE=3600 DELAY_API=1000 babel-node ./src",
+    "dev": "NODE_ENV=development nodemon --exec npm run server"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.20.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
+    "express-jwt": "^6.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "lowdb": "^3.0.0",
+    "nodemon": "^2.0.15",
+    "rand-token": "^1.0.1",
+    "socket.io": "^4.4.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.8",
+    "@babel/node": "^7.16.8",
+    "@babel/preset-env": "^7.16.11"
+  }
+}

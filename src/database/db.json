@@ -1,0 +1,21 @@
+{
+  "users": [
+    {
+      "email": "phonghophamminh@gmail.com",
+      "password": "$2b$10$TfHovEShRT7eAC4ZsLwu.OHlDNQXrPoQo4.30JtBxRlP8GDEQz1IS",
+      "refreshToken": "W4XeTfwUZY9mTNN4wNkcIczLSgXeihet"
+    }
+  ],
+  "rooms": {
+    "1": {
+      "id": 1,
+      "data": {
+        "users": [],
+        "messages": {
+          "lastId": 1
+        }
+      }
+    },
+    "lastId": 1
+  }
+}
