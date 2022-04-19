@@ -1,21 +1,21 @@
-import { getRoomById, updateRoomById } from "./rooms.service.js";
+import { getChanelById, updateChanelById } from "./chanels.service.js";
 
-export const updateMessages = (roomId, callback) => {
-  return updateRoomById(roomId, (room) => callback(room.data.messages));
+export const updateMessages = (chanelId, callback) => {
+  return updateChanelById(chanelId, (chanel) => callback(chanel.data.messages));
 };
 
-export const getMessages = async (roomId) => {
-  const room = await getRoomById(roomId);
-  return room.messages;
+export const getMessages = async (chanelId) => {
+  const chanel = await getChanelById(chanelId);
+  return chanel.data.messages;
 };
 
-export const getMessageById = async (roomId, id) => {
-  const room = await getRoomById(roomId);
-  return room.data.messages[id];
+export const getMessageById = async (chanelId, id) => {
+  const chanel = await getChanelById(chanelId);
+  return chanel.data.messages[id];
 };
 
-export const addMessage = (roomId, value) => {
-  return updateMessages(roomId, (messages) => {
+export const addMessage = (chanelId, value) => {
+  return updateMessages(chanelId, (messages) => {
     const lastId = (messages.lastId || 0) + 1;
     messages[lastId] = {
       id: lastId,
@@ -32,11 +32,11 @@ export const addMessage = (roomId, value) => {
   });
 };
 
-export const updateMessageById = async (roomId, id, value) => {
-  const message = await getMessageById(roomId, id);
+export const updateMessageById = async (chanelId, id, value) => {
+  const message = await getMessageById(chanelId, id);
   if (!message) return { error: "message id doesn't exist" };
 
-  return updateMessages(roomId, (messages) => {
+  return updateMessages(chanelId, (messages) => {
     messages[id].data.value = value;
     return messages[id];
   });

@@ -18,9 +18,20 @@ export const login = async (req, res) => {
 
   if (error) return res.status(401).send(error);
 
-  res.cookie("accessToken", data.accessToken, { maxAge: process.env.ACCESS_TOKEN_LIFE, httpOnly: true });
+  res.cookie("accessToken", data.accessToken, {
+    maxAge: process.env.ACCESS_TOKEN_LIFE,
+    httpOnly: true,
+  });
 
   res.send(data);
+};
+
+export const verify = async (req, res) => {
+  console.log("req.cookies.accessToken", req.cookies.accessToken);
+  const verified = await authMethods.decodeToken(req.cookies.accessToken);
+  const isVerified = verified && Date.now() < verified.exp * 1000;
+
+  res.status(200).send({ verified: isVerified });
 };
 
 export const refreshToken = async (req, res) => {
@@ -29,7 +40,10 @@ export const refreshToken = async (req, res) => {
   const { refreshToken } = req.body.postData;
   if (!refreshToken) return res.status(400).send("refreshToken is required");
 
-  const decoded = await authMethods.decodeToken(req.cookies.accessToken, process.env.ACCESS_TOKEN_SECRET);
+  const decoded = await authMethods.decodeToken(
+    req.cookies.accessToken,
+    process.env.ACCESS_TOKEN_SECRET
+  );
   if (!decoded) return res.status(400).send("refeshToken is invalid");
 
   const user = await userModel.getUser(decoded.payload.email);

@@ -6,13 +6,23 @@
       "refreshToken": "W4XeTfwUZY9mTNN4wNkcIczLSgXeihet"
     }
   ],
-  "rooms": {
+  "chanels": {
     "1": {
       "id": 1,
       "data": {
         "users": [],
         "messages": {
-          "lastId": 1
+          "2": {
+            "id": 2,
+            "data": {
+              "value": "message 1",
+              "createdDate": "2022-04-19T02:56:34.397Z",
+              "reply": null,
+              "reactions": {}
+            },
+            "user": {}
+          },
+          "lastId": 2
         }
       }
     },

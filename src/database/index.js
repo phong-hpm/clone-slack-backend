@@ -28,7 +28,7 @@ export const updateData = async (callback) => {
 
 export const initDatabase = async () => {
   db.data = {
-    rooms: {
+    chanels: {
       1: {
         id: "1",
         messages: {

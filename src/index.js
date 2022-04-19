@@ -22,14 +22,14 @@ app.use(bodyParser.json());
 
 // deplay for testing
 app.use((req, res, next) => {
-  setTimeout(() => next(), process.env.DELAY_API);
+  setTimeout(() => next(), Math.random() * process.env.DELAY_API);
 });
 
 // CORS
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 
 // cookies
-app.use(cookieParser());
+app.use(cookieParser({ httpOnly: true }));
 
 // routers
 app.use(routes);
