@@ -6,7 +6,7 @@ const verify = promisify(jwt.verify).bind(jwt);
 
 export const generateToken = async (payload, secretSignature, tokenLife) => {
   try {
-    return await sign({ payload }, secretSignature, { algorithm: "HS256", expiresIn: tokenLife });
+    return await sign(payload, secretSignature, { algorithm: "HS256", expiresIn: tokenLife });
   } catch (error) {
     console.log(`Error in generate access token: + ${error}`);
     return null;
@@ -24,7 +24,11 @@ export const decodeToken = async (token) => {
   }
 };
 
-export const refreshToken = async () => {
-  const accessToken = await generateToken({ email }, process.env.ACCESS_TOKEN_SECRET, process.env.ACCESS_TOKEN_LIFE);
+export const refreshToken = async (payload) => {
+  const accessToken = await generateToken(
+    payload,
+    process.env.ACCESS_TOKEN_SECRET,
+    process.env.ACCESS_TOKEN_LIFE
+  );
   return accessToken;
 };

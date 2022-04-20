@@ -1,4 +1,4 @@
-import * as services from "../services/messages.services.js";
+import * as services from "../services/messages.service.js";
 
 export const getAll = async (req, res) => {
   const { chanelId } = req.params;

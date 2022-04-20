@@ -5,7 +5,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
 
-import { db, initDatabase } from "./database/index.js";
+import { db } from "./database/index.js";
 
 import routes from "./routes/index.js";
 
@@ -34,7 +34,6 @@ app.use(cookieParser({ httpOnly: true }));
 // routers
 app.use(routes);
 
-httpServer.listen(8000, async () => {
-  await db.read();
-  if (!db.data) initDatabase();
+httpServer.listen(8000, () => {
+  db.read();
 });

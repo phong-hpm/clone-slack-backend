@@ -1,32 +1,21 @@
-import { db, getData, updateData } from "../database/index.js";
+import * as chanelsModel from "../models/chanels.model.js";
 
-export const getChanels = () => getData((data) => data.chanels);
-export const getChanelById = (id) => getData((data) => data.chanels[id]);
-
-export const updateChanels = (callback) => {
-  return updateData((data) => callback(data.chanels));
+export const getById = (id) => {
+  return chanelsModel.getChanel(id);
 };
-
 export const addChanel = () => {
-  return updateChanels((chanels) => {
-    const lastId = (chanels.lastId || 0) + 1;
-
-    chanels[lastId] = {
-      id: lastId,
-      data: {
-        users: [],
-        messages: { lastId: 1 },
-      },
-    };
-    chanels.lastId = lastId;
-
-    return chanels[lastId];
-  });
+  return createChanel();
 };
 
-export const updateChanelById = async (id, callback) => {
-  const chanel = await getChanelById(id);
-  if (!chanel) return { error: "chanel id doesn't exist" };
+// export const updateChanelById = async (id, callback) => {
+//   const chanel = await getChanelById(id);
+//   if (!chanel) return { error: "chanel id doesn't exist" };
 
-  return updateChanels((chanels) => callback(chanels[id]));
+//   return updateChanels((chanels) => callback(chanels[id]));
+// };
+
+export const getChanelView = async (id) => {
+  const chanelView = await chanelsModel.getChanel(id);
+  delete chanelView.messages;
+  return chanelView;
 };

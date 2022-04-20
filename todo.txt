@@ -1,0 +1,7 @@
+membership (chanelId)
+  {
+    chanelId: "xx"
+    members: ["AA", "BB"]
+  }
+
+

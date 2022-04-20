@@ -15,31 +15,17 @@ const adapter = new lowdb.JSONFile(file);
 
 export const db = new LowWithLodash(adapter);
 
-export const getData = async (callback) => {
-  if (!db.data) await db.read();
-  return callback(db.data);
+export const getTable = async (tableName) => {
+  await db.read();
+  return db.data[tableName];
+};
+
+export const writeData = async () => {
+  await db.write();
 };
 
 export const updateData = async (callback) => {
   const result = callback(db.data);
   await db.write();
   return result;
-};
-
-export const initDatabase = async () => {
-  db.data = {
-    chanels: {
-      1: {
-        id: "1",
-        messages: {
-          1: {
-            id: "1",
-            text: "message 1",
-          },
-        },
-      },
-    },
-  };
-
-  await db.write();
 };

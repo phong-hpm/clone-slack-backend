@@ -2,6 +2,8 @@ import bcrypt from "bcrypt";
 import randToken from "rand-token";
 import * as authMethods from "../methods/auth.method.js";
 
+import * as teamsServices from "./teams.service.js";
+
 import * as userModel from "../models/user.model.js";
 
 export const getByEmail = async (email) => {
@@ -20,30 +22,45 @@ export const register = async (email, password) => {
 };
 
 export const login = async (email, password) => {
-  const user = await getByEmail(email);
-  if (!user) return { error: "Couldn't find email" };
-  if (!bcrypt.compareSync(password, user.password)) return { error: "Password is incorrect" };
+  const auth = await getByEmail(email);
+  if (!auth) return { error: "Couldn't find email" };
+  if (!bcrypt.compareSync(password, auth.password)) return { error: "Password is incorrect" };
+
+  const userView = await getUserView(auth.id);
 
   const accessToken = await authMethods.generateToken(
-    { email },
+    { id: auth.id, email: auth.email },
     process.env.ACCESS_TOKEN_SECRET,
     process.env.ACCESS_TOKEN_LIFE
   );
   if (!accessToken) return { error: "Login failed, try later" };
 
-  let refreshToken = user.refreshToken || randToken.generate(32);
-  if (!user.refreshToken) {
-    await userModel.updateRefreshToken(user.email, refreshToken);
+  let refreshToken = auth.refreshToken || randToken.generate(32);
+  if (!auth.refreshToken) {
+    await userModel.updateRefreshToken(auth.email, refreshToken);
   }
 
   const data = {
     accessToken,
-    refreshToken,
-    user: {
-      email: user.email,
-      name: user.name,
-    },
+    // refreshToken,
+    user: userView,
   };
 
   return { data };
+};
+
+export const getUserView = async (id) => {
+  const userView = await userModel.getUserView(id);
+
+  if (userView) {
+    const teams = [];
+    for (let i = 0; i < userView.teams.length; i++) {
+      const teamView = await teamsServices.getTeamView(userView.teams[i]);
+      if (teamView) teams.push(teamView);
+    }
+
+    userView.teams = teams;
+  }
+
+  return userView;
 };

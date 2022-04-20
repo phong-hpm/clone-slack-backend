@@ -1,8 +1,9 @@
-import { db } from "../database/index.js";
+import { getTable, writeData } from "../database/index.js";
 
 export const getUser = async (email) => {
   try {
-    return db.data.users.find((user) => user.email === email);
+    const users = await getTable("users");
+    return users.find((user) => user.email === email);
   } catch {
     return null;
   }
@@ -10,8 +11,9 @@ export const getUser = async (email) => {
 
 export const createUser = async (user) => {
   try {
-    db.data.users.push(user);
-    await db.write();
+    const users = await getTable("users");
+    users.push(user);
+    await writeData();
     return true;
   } catch (e) {
     return false;
@@ -20,11 +22,21 @@ export const createUser = async (user) => {
 
 export const updateRefreshToken = async (email, refreshToken) => {
   try {
-    const user = db.data.users.find((user) => user.email === email);
+    const users = await getTable("users");
+    const user = users.find((user) => user.email === email);
     user.refreshToken = refreshToken;
-    await db.write();
+    await writeData();
     return true;
   } catch {
     return false;
+  }
+};
+
+export const getUserView = async (id) => {
+  try {
+    const usersView = await getTable("usersView");
+    return usersView[id];
+  } catch {
+    return null;
   }
 };

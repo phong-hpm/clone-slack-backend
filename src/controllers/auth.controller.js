@@ -1,10 +1,10 @@
-import * as services from "../services/auth.service.js";
+import * as userServices from "../services/auth.service.js";
 import * as authMethods from "../methods/auth.method.js";
 
 export const register = async (req, res) => {
   const { email = "", password = "" } = req.body.postData;
 
-  const { error } = await services.register(email, password);
+  const { error } = await userServices.register(email, password);
 
   if (error) return res.status(400).send(error);
 
@@ -14,7 +14,7 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   const { email = "", password = "" } = req.body.postData || {};
 
-  const { error, data } = await services.login(email, password);
+  const { error, data } = await userServices.login(email, password);
 
   if (error) return res.status(401).send(error);
 
@@ -23,15 +23,27 @@ export const login = async (req, res) => {
     httpOnly: true,
   });
 
-  res.send(data);
+  const response = {
+    user: { ...data.user, teams: undefined },
+    teams: data.user.teams,
+  };
+
+  res.send(response);
 };
 
 export const verify = async (req, res) => {
-  console.log("req.cookies.accessToken", req.cookies.accessToken);
   const verified = await authMethods.decodeToken(req.cookies.accessToken);
   const isVerified = verified && Date.now() < verified.exp * 1000;
+  let userView;
+  if (isVerified) userView = await userServices.getUserView(verified.id);
 
-  res.status(200).send({ verified: isVerified });
+  const response = {
+    verified: isVerified,
+    user: { ...userView, teams: undefined },
+    teams: userView.teams,
+  };
+
+  res.send(response);
 };
 
 export const refreshToken = async (req, res) => {
