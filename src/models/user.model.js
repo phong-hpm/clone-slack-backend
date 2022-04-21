@@ -1,4 +1,5 @@
 import { getTable, writeData } from "../database/index.js";
+import { generateId } from "../utils/generateId.js";
 
 export const getUser = async (email) => {
   try {
@@ -9,11 +10,19 @@ export const getUser = async (email) => {
   }
 };
 
-export const createUser = async (user) => {
+console.log(`M-${generateId()}`);
+
+export const createUser = async ({ email, password, name }) => {
   try {
+    const id = `U-${generateId()}`;
     const users = await getTable("users");
-    users.push(user);
+    users.push({ id, email, password });
     await writeData();
+
+    const usersView = await getTable("usersView");
+    usersView[id] = { id, name, email, timeZone: "", teams: [] };
+    await writeData();
+
     return true;
   } catch (e) {
     return false;

@@ -2,10 +2,9 @@ import * as authMethods from "../methods/auth.method.js";
 import * as userModel from "../models/user.model.js";
 
 export const authentication = async (req, res, next) => {
-  const verified = await authMethods.decodeToken(req.cookies.accessToken);
+  const { error } = await verifyToken(req.cookies.accessToken);
 
-  if (!verified) return res.status(401).send("Token is invalid");
-  if (Date.now() > jwt.exp * 1000) return res.status(401).send("Token is expired");
+  if (error) return res.status(401).send(error);
 
   const user = await userModel.getUser(verified.payload.email);
   const accessToken = await authMethods.refreshToken(verified.payload);
@@ -13,4 +12,13 @@ export const authentication = async (req, res, next) => {
   req.user = user;
 
   next();
+};
+
+export const verifyToken = async (token) => {
+  const verified = await authMethods.decodeToken(token);
+
+  if (!verified) return { error: "Token is invalid" };
+  if (Date.now() > verified.exp * 1000) return { error: "Token is expired" };
+
+  return {};
 };

@@ -2,9 +2,9 @@ import * as userServices from "../services/auth.service.js";
 import * as authMethods from "../methods/auth.method.js";
 
 export const register = async (req, res) => {
-  const { email = "", password = "" } = req.body.postData;
+  const { email = "", password = "", name = "" } = req.body.postData;
 
-  const { error } = await userServices.register(email, password);
+  const { error } = await userServices.register(email, password, name);
 
   if (error) return res.status(400).send(error);
 
@@ -34,14 +34,17 @@ export const login = async (req, res) => {
 export const verify = async (req, res) => {
   const verified = await authMethods.decodeToken(req.cookies.accessToken);
   const isVerified = verified && Date.now() < verified.exp * 1000;
-  let userView;
-  if (isVerified) userView = await userServices.getUserView(verified.id);
 
-  const response = {
-    verified: isVerified,
-    user: { ...userView, teams: undefined },
-    teams: userView.teams,
-  };
+  let response = { verified: isVerified };
+
+  if (isVerified) {
+    const userView = await userServices.getUserView(verified.id, {
+      isDeep: true,
+      teams: { isDeep: true },
+    });
+    response.user = { ...userView, teams: undefined };
+    response.teams = userView.teams;
+  }
 
   res.send(response);
 };
