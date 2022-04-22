@@ -6,7 +6,7 @@ export const authentication = async (req, res, next) => {
 
   if (error) return res.status(401).send(error);
 
-  const user = await userModel.getUser(verified.payload.email);
+  const user = await userModel.getUserByEmail(verified.payload.email);
   const accessToken = await authMethods.refreshToken(verified.payload);
   res.cookie("accessToken", accessToken, { maxAge: process.env.ACCESS_TOKEN_LIFE, httpOnly: true });
   req.user = user;

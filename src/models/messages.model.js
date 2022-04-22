@@ -19,14 +19,21 @@ export const getMessages = async (limit) => {
   }
 };
 
-export const createTeam = async (message) => {
+export const createMessage = async ({ text, team, user, type }) => {
   try {
-    const id = generateId();
+    const id = `M-${generateId()}`;
     const messages = await getTable("messages");
-    messages[id] = team;
+    messages[id] = {
+      id,
+      text,
+      type,
+      created: Date.now(),
+      user,
+      team,
+    };
     await writeData();
-    return true;
+    return messages[id];
   } catch (e) {
-    return false;
+    return null;
   }
 };

@@ -61,7 +61,7 @@ export const refreshToken = async (req, res) => {
   );
   if (!decoded) return res.status(400).send("refeshToken is invalid");
 
-  const user = await userModel.getUser(decoded.payload.email);
+  const user = await userModel.getUserByEmail(decoded.payload.email);
   if (!user) return res.status(401).send("Email doesn't exist");
   if (refreshToken !== user.refreshToken) return res.status(400).send("refreshToken is invalid");
 

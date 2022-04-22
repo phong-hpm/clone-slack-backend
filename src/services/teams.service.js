@@ -2,14 +2,19 @@ import * as chanelsServices from "./chanels.service.js";
 import * as authServices from "./auth.service.js";
 import * as teamsModel from "../models/teams.model.js";
 
-export const getTeamView = async (id, options) => {
+export const getTeamView = async (id, userId, options) => {
   const team = await teamsModel.getTeam(id);
 
   if (team && options.isDeep) {
     if (options.chanels && options.chanels.isDeep) {
       const chanels = [];
+      const directMessages = [];
       for (let i = 0; i < team.chanels.length; i++) {
-        const chanelView = await chanelsServices.getChanelView(team.chanels[i], options.chanels);
+        const chanelView = await chanelsServices.getChanelView(
+          team.chanels[i],
+          userId,
+          options.chanels
+        );
         if (chanelView) chanels.push(chanelView);
       }
 

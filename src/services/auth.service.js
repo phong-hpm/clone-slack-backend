@@ -6,8 +6,12 @@ import * as teamsServices from "./teams.service.js";
 
 import * as userModel from "../models/user.model.js";
 
+export const getById = async (id) => {
+  return await userModel.getUserById(id);
+};
+
 export const getByEmail = async (email) => {
-  return await userModel.getUser(email);
+  return await userModel.getUserByEmail(email);
 };
 
 export const register = async (email, password, name) => {
@@ -59,7 +63,11 @@ export const getUserView = async (id, options = {}) => {
     if (options.teams && options.teams.isDeep) {
       const teams = [];
       for (let i = 0; i < userView.teams.length; i++) {
-        const teamView = await teamsServices.getTeamView(userView.teams[i], options.teams);
+        const teamView = await teamsServices.getTeamView(
+          userView.teams[i],
+          userView.id,
+          options.teams
+        );
         if (teamView) teams.push(teamView);
       }
 

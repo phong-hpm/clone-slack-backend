@@ -105,28 +105,30 @@ io.of(teamIdRegExp)
     const namespace = socket.nsp;
     const teamId = namespace.name.replace("/", "");
 
-    const options = {
-      isDeep: true,
-      chanels: {
+    socket.on("load-chanels", ({ userId }) => {
+      const options = {
         isDeep: true,
-        messages: {
-          isDeep: false,
-          isRemove: true,
+        chanels: {
+          isDeep: true,
+          messages: {
+            isDeep: false,
+            isRemove: true,
+          },
+          users: {
+            isDeep: false,
+          },
         },
         users: {
-          isDeep: false,
+          isDeep: true,
+          teams: {
+            isRemove: true,
+          },
         },
-      },
-      users: {
-        isDeep: true,
-        teams: {
-          isRemove: true,
-        },
-      },
-    };
+      };
 
-    teamsServices.getTeamView(teamId, options).then((res) => {
-      socket.emit("chanel-data", res);
+      teamsServices.getTeamView(teamId, userId, options).then((res) => {
+        socket.emit("chanels-data", res);
+      });
     });
   });
 
@@ -142,25 +144,36 @@ io.of(chanelIdRegExp)
   })
   .on("connection", (socket) => {
     const namespace = socket.nsp;
-    const chanelId = namespace.name.replace("/", "");
+    const [teamId, chanelId] = namespace.name.replace("/", "").split("/");
 
-    socket.on("load-messages", (data) => {
-      const { limit = 2, latest } = data;
+    // fetch existing users
+    const users = [];
+    for (let [id, socket] of io.of(namespace.name).sockets) {
+      users.push({
+        sId: id,
+        name: socket.name,
+        email: socket.email,
+      });
+    }
+    socket.emit("users", users);
+
+    socket.on("add-message", (payload) => {
+      const { userId, data } = payload;
+      messagesServices.add({ teamId, chanelId, userId, text: data.text }).then((res) => {
+        io.of(namespace.name).emit("message-data", res);
+      });
+    });
+
+    socket.on("load-messages", (payload) => {
+      const { limit = 2, latest } = payload;
 
       const options = {
         isDeep: true,
-        messages: {
-          isDeep: true,
-          limit,
-        },
-        users: {
-          isDeep: true,
-        },
+        limit,
       };
 
-      chanelsServices.getChanelView(chanelId, options).then((res) => {
-        const { messages = [] } = res || {};
-        socket.emit("messages-data", messages);
+      chanelsServices.getChanelHistory(chanelId, options).then((res) => {
+        socket.emit("messages-data", res);
       });
     });
   });
