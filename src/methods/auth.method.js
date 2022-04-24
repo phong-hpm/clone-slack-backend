@@ -4,31 +4,35 @@ import jwt from "jsonwebtoken";
 const sign = promisify(jwt.sign).bind(jwt);
 const verify = promisify(jwt.verify).bind(jwt);
 
-export const generateToken = async (payload, secretSignature, tokenLife) => {
+const generateToken = async (payload, expiresIn) => {
   try {
-    return await sign(payload, secretSignature, { algorithm: "HS256", expiresIn: tokenLife });
+    return await sign(payload, process.env.ACCESS_TOKEN_SECRET, { algorithm: "HS256", expiresIn });
   } catch (error) {
     console.log(`Error in generate access token: + ${error}`);
     return null;
   }
 };
 
-export const decodeToken = async (token) => {
-  try {
-    return await verify(token, process.env.ACCESS_TOKEN_SECRET, {
-      ignoreExpiration: true,
-    });
-  } catch (error) {
-    console.log(`Error in decode access token: ${error}`);
-    return null;
-  }
+export const generateAccessToken = async (payload) => {
+  return generateToken(payload, process.env.ACCESS_TOKEN_LIFE);
 };
 
-export const refreshToken = async (payload) => {
-  const accessToken = await generateToken(
-    payload,
-    process.env.ACCESS_TOKEN_SECRET,
-    process.env.ACCESS_TOKEN_LIFE
-  );
-  return accessToken;
+export const generateRefreshToken = async (payload) => {
+  return generateToken(payload, process.env.REFRESH_TOKEN_LIFE);
+};
+
+export const verifyToken = async (token) => {
+  try {
+    const payload = await verify(token, process.env.ACCESS_TOKEN_SECRET, {
+      ignoreExpiration: true,
+    });
+
+    if (!payload) return { error: "Token is invalid", invalid: true };
+    if (Date.now() > payload.exp * 1000) return { error: "Token is expired", expired: true };
+
+    return { payload };
+  } catch (error) {
+    console.log(`Error in decode access token: ${error}`);
+    return { error: "verification was failed" };
+  }
 };

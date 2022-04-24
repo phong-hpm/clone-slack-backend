@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "ACCESS_TOKEN_SECRET=secret ACCESS_TOKEN_LIFE=3600000 DELAY_API=20 babel-node ./src",
+    "server": "ACCESS_TOKEN_SECRET=secret ACCESS_TOKEN_LIFE=3600000 REFRESH_TOKEN_LIFE=604800000 DELAY_API=1000 babel-node ./src",
     "dev": "NODE_ENV=development nodemon --exec npm run server"
   },
   "author": "",
@@ -25,12 +25,14 @@
     "nodemon": "^2.0.15",
     "rand-token": "^1.0.1",
     "socket.io": "^4.4.1",
+    "socket.io-cookie-parser": "^1.0.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.17.6",
     "@babel/core": "^7.17.8",
     "@babel/node": "^7.16.8",
-    "@babel/preset-env": "^7.16.11"
+    "@babel/preset-env": "^7.16.11",
+    "eslint": "^8.13.0"
   }
 }

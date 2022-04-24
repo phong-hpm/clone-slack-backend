@@ -36,7 +36,6 @@ export const getChanelView = async (id, userId, options = {}) => {
   if (chanel && options.isDeep) {
     if (options.messages) {
       if (options.messages.isDeep) {
-        console.log(chanel);
         chanel.messages = await getChanelHistory(chanel.id, options.messages);
       }
     }

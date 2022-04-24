@@ -8,7 +8,6 @@ export const getTeamView = async (id, userId, options) => {
   if (team && options.isDeep) {
     if (options.chanels && options.chanels.isDeep) {
       const chanels = [];
-      const directMessages = [];
       for (let i = 0; i < team.chanels.length; i++) {
         const chanelView = await chanelsServices.getChanelView(
           team.chanels[i],

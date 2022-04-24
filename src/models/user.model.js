@@ -1,6 +1,8 @@
 import { getTable, writeData } from "../database/index.js";
 import { generateId } from "../utils/generateId.js";
 
+import * as authMethods from "../methods/auth.method.js";
+
 export const getUserById = async (id) => {
   try {
     const users = await getTable("users");
@@ -19,32 +21,42 @@ export const getUserByEmail = async (email) => {
   }
 };
 
-export const createUser = async ({ email, password, name }) => {
+export const createUser = async ({ name, email, password }) => {
   try {
     const id = `U-${generateId()}`;
+
+    // add user
     const users = await getTable("users");
-    users.push({ id, email, password });
+    users.push({ id, email, password, refreshToken: "" });
     await writeData();
 
+    // add userView
     const usersView = await getTable("usersView");
     usersView[id] = { id, name, email, timeZone: "", teams: [] };
     await writeData();
 
-    return true;
+    // setnew refresh token
+    const refreshToken = await updateRefreshToken(id);
+
+    return { userView: usersView[id], refreshToken };
   } catch (e) {
-    return false;
+    return null;
   }
 };
 
-export const updateRefreshToken = async (email, refreshToken) => {
+export const updateRefreshToken = async (id) => {
   try {
-    const users = await getTable("users");
-    const user = users.find((user) => user.email === email);
+    // get refersh token
+    const user = await getUserById(id);
+    const refreshToken = await authMethods.generateRefreshToken({ id: user.id, email: user.email });
+
     user.refreshToken = refreshToken;
     await writeData();
-    return true;
-  } catch {
-    return false;
+
+    return refreshToken;
+  } catch (e) {
+    console.log(e);
+    return null;
   }
 };
 
