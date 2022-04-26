@@ -1,4 +1,4 @@
-import * as chanelsServices from "./chanels.service.js";
+import * as channelsServices from "./channels.service.js";
 import * as authServices from "./auth.service.js";
 import * as teamsModel from "../models/teams.model.js";
 
@@ -6,25 +6,25 @@ export const getTeamView = async (id, userId, options) => {
   const team = await teamsModel.getTeam(id);
 
   if (team && options.isDeep) {
-    if (options.chanels && options.chanels.isDeep) {
-      const chanels = [];
-      for (let i = 0; i < team.chanels.length; i++) {
-        const chanelView = await chanelsServices.getChanelView(
-          team.chanels[i],
+    if (options.channels && options.channels.isDeep) {
+      const channels = [];
+      for (let i = 0; i < team.channels.length; i++) {
+        const channelView = await channelsServices.getChanelView(
+          team.channels[i],
           userId,
-          options.chanels
+          options.channels
         );
-        if (chanelView) chanels.push(chanelView);
+        if (channelView) channels.push(channelView);
       }
 
-      team.chanels = chanels;
+      team.channels = channels;
     }
 
     if (options.users && options.users.isDeep) {
       const users = [];
       for (let i = 0; i < team.users.length; i++) {
-        const chanelView = await authServices.getUserView(team.users[i], options.users);
-        if (chanelView) users.push(chanelView);
+        const channelView = await authServices.getUserView(team.users[i], options.users);
+        if (channelView) users.push(channelView);
       }
 
       team.users = users;

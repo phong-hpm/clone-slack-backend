@@ -115,7 +115,7 @@
       "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
     }
   },
-  "chanel_messages": {
+  "channel_messages": {
     "C-15A97A61-F619-416F-863F-B42F178FA299": [
       "M-EA031DEF-F0C2-481E-8B2D-72072AE6C738",
       "M-38515568-BD3A-423D-B7BF-E7FA9804B286",
@@ -128,7 +128,7 @@
       "M-0FE4B431-C15A-45F3-9DC9-DF2E8DDF4ECA"
     ]
   },
-  "chanels": {
+  "channels": {
     "D-B80B9B6F-1FEA-404A-B094-DFB815750D8E": {
       "id": "D-B80B9B6F-1FEA-404A-B094-DFB815750D8E",
       "type": "direct_message",
@@ -152,7 +152,7 @@
     },
     "C-F9E04C06-DF6A-4495-B965-AF2D7A15547A": {
       "id": "C-F9E04C06-DF6A-4495-B965-AF2D7A15547A",
-      "type": "chanel",
+      "type": "channel",
       "name": "general",
       "isAllUsers": true,
       "users": [],
@@ -162,7 +162,7 @@
     },
     "C-98EC88EE-56AC-4C5F-8D5F-A5B171D2CDE1": {
       "id": "C-98EC88EE-56AC-4C5F-8D5F-A5B171D2CDE1",
-      "type": "chanel",
+      "type": "channel",
       "name": "random",
       "isAllUsers": true,
       "users": [],
@@ -172,7 +172,7 @@
     },
     "C-15A97A61-F619-416F-863F-B42F178FA299": {
       "id": "C-15A97A61-F619-416F-863F-B42F178FA299",
-      "type": "chanel",
+      "type": "channel",
       "name": "Chanel 1",
       "isAllUsers": false,
       "users": [
@@ -186,7 +186,7 @@
     },
     "C-563B1E15-E612-4D52-8735-3B808A9525A8": {
       "id": "C-563B1E15-E612-4D52-8735-3B808A9525A8",
-      "type": "chanel",
+      "type": "channel",
       "name": "Chanel 2",
       "isAllUsers": false,
       "users": ["U-B2C9CAAB-9784-452A-85A0-9E927B779A87", "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E"],
@@ -196,7 +196,7 @@
     },
     "C-0BA889E3-B586-4EC1-A141-409C514B27E4": {
       "id": "C-0BA889E3-B586-4EC1-A141-409C514B27E4",
-      "type": "chanel",
+      "type": "channel",
       "name": "general",
       "isAllUsers": true,
       "users": [],
@@ -206,7 +206,7 @@
     },
     "C-37D2EDF3-1F41-401B-AD8D-22DD0F9CE17D": {
       "id": "C-37D2EDF3-1F41-401B-AD8D-22DD0F9CE17D",
-      "type": "chanel",
+      "type": "channel",
       "name": "random",
       "isAllUsers": true,
       "users": [],
@@ -219,7 +219,7 @@
     "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB": {
       "id": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB",
       "name": "Team 1",
-      "chanels": [
+      "channels": [
         "C-F9E04C06-DF6A-4495-B965-AF2D7A15547A",
         "C-98EC88EE-56AC-4C5F-8D5F-A5B171D2CDE1",
         "C-15A97A61-F619-416F-863F-B42F178FA299",
@@ -238,7 +238,7 @@
     "T-23A0D72B-76E5-430D-B528-329048987FF5": {
       "id": "T-23A0D72B-76E5-430D-B528-329048987FF5",
       "name": "Team 2",
-      "chanels": [
+      "channels": [
         "C-0BA889E3-B586-4EC1-A141-409C514B27E4",
         "C-37D2EDF3-1F41-401B-AD8D-22DD0F9CE17D"
       ],

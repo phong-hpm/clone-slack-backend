@@ -4,7 +4,7 @@
       "id": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
       "email": "phonghophamminh@gmail.com",
       "password": "$2b$10$TSd/Opv..k15dRqpqIax0upaQJaLv003P0GQbwUUpnMpwxPCqT.O6",
-      "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlUtQjJDOUNBQUItOTc4NC00NTJBLTg1QTAtOUU5MjdCNzc5QTg3IiwiZW1haWwiOiJwaG9uZ2hvcGhhbW1pbmhAZ21haWwuY29tIiwiaWF0IjoxNjUwNzg3NTkxLCJleHAiOjE2NTEzOTIzOTF9.7czRAJW_5b7QgVcdXr-CDGQzIP7eufVI_RuYarjxqC0"
+      "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlUtQjJDOUNBQUItOTc4NC00NTJBLTg1QTAtOUU5MjdCNzc5QTg3IiwiZW1haWwiOiJwaG9uZ2hvcGhhbW1pbmhAZ21haWwuY29tIiwiaWF0IjoxNjUwOTQ0OTA0LCJleHAiOjE2NTE1NDk3MDR9.uIo3VIaqsWt1YuyFCoc-PY3vu7WI_xdNc13rt9bzvgU"
     },
     {
       "id": "U-1B10D300-7136-481E-BCC1-5EF49C37FA31",
@@ -25,28 +25,21 @@
       "name": "Phong Ho",
       "email": "phonghophamminh@gmail.com",
       "timeZone": "",
-      "teams": [
-        "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB",
-        "T-23A0D72B-76E5-430D-B528-329048987FF5"
-      ]
+      "teams": ["T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB", "T-23A0D72B-76E5-430D-B528-329048987FF5"]
     },
     "U-1B10D300-7136-481E-BCC1-5EF49C37FA31": {
       "id": "U-1B10D300-7136-481E-BCC1-5EF49C37FA31",
       "name": "Teo",
       "email": "letjteo@gmail.com",
       "timeZone": "",
-      "teams": [
-        "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
-      ]
+      "teams": ["T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"]
     },
     "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E": {
       "id": "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E",
       "name": "Le",
       "email": "letjteo1@gmail.com",
       "timeZone": "",
-      "teams": [
-        "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
-      ]
+      "teams": ["T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"]
     }
   },
   "messages": {
@@ -161,9 +154,33 @@
       "created": 1650656769519,
       "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
       "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+    },
+    "M-95D76B67-2875-4528-8B46-462FCA1554A7": {
+      "id": "M-95D76B67-2875-4528-8B46-462FCA1554A7",
+      "text": "haha",
+      "type": "message",
+      "created": 1650796473900,
+      "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+      "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+    },
+    "M-6D8F1781-4979-48A5-8562-11EFB381B7DC": {
+      "id": "M-6D8F1781-4979-48A5-8562-11EFB381B7DC",
+      "text": "helo bro\n",
+      "type": "message",
+      "created": 1650797886572,
+      "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+      "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+    },
+    "M-735FE882-0F68-4A69-A5AC-D170A0EEB4E1": {
+      "id": "M-735FE882-0F68-4A69-A5AC-D170A0EEB4E1",
+      "text": "how are you?\n",
+      "type": "message",
+      "created": 1650797893671,
+      "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+      "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
     }
   },
-  "chanel_messages": {
+  "channel_messages": {
     "C-15A97A61-F619-416F-863F-B42F178FA299": [
       "M-EA031DEF-F0C2-481E-8B2D-72072AE6C738",
       "M-38515568-BD3A-423D-B7BF-E7FA9804B286",
@@ -178,43 +195,37 @@
       "M-256DDB1E-8B5A-4101-A5F9-98D1B47DA77F",
       "M-0C4D2356-4734-4F7B-A356-C384C82C5480",
       "M-270F2ECD-9298-4E3A-BA0E-C6852371724E",
-      "M-0BC22CC6-C4CF-43A7-92A3-D122440DB437"
-    ]
+      "M-0BC22CC6-C4CF-43A7-92A3-D122440DB437",
+      "M-6D8F1781-4979-48A5-8562-11EFB381B7DC",
+      "M-735FE882-0F68-4A69-A5AC-D170A0EEB4E1"
+    ],
+    "C-F9E04C06-DF6A-4495-B965-AF2D7A15547A": ["M-95D76B67-2875-4528-8B46-462FCA1554A7"]
   },
-  "chanels": {
+  "channels": {
     "D-B80B9B6F-1FEA-404A-B094-DFB815750D8E": {
       "id": "D-B80B9B6F-1FEA-404A-B094-DFB815750D8E",
       "type": "direct_message",
-      "users": [
-        "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
-        "U-1B10D300-7136-481E-BCC1-5EF49C37FA31"
-      ],
+      "users": ["U-B2C9CAAB-9784-452A-85A0-9E927B779A87", "U-1B10D300-7136-481E-BCC1-5EF49C37FA31"],
       "created": 1650353609201,
       "latest": 1650353609201
     },
     "D-42B10AED-953A-4D49-AEC4-573D168BEB7E": {
       "id": "D-42B10AED-953A-4D49-AEC4-573D168BEB7E",
       "type": "direct_message",
-      "users": [
-        "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
-        "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E"
-      ],
+      "users": ["U-B2C9CAAB-9784-452A-85A0-9E927B779A87", "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E"],
       "created": 1650353609201,
       "latest": 1650353609201
     },
     "D-C0D35670-9F3C-4F0F-B2D6-3D2BC6A8FFF4": {
       "id": "D-C0D35670-9F3C-4F0F-B2D6-3D2BC6A8FFF4",
       "type": "direct_message",
-      "users": [
-        "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E",
-        "U-1B10D300-7136-481E-BCC1-5EF49C37FA31"
-      ],
+      "users": ["U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E", "U-1B10D300-7136-481E-BCC1-5EF49C37FA31"],
       "created": 1650353609201,
       "latest": 1650353609201
     },
     "C-F9E04C06-DF6A-4495-B965-AF2D7A15547A": {
       "id": "C-F9E04C06-DF6A-4495-B965-AF2D7A15547A",
-      "type": "chanel",
+      "type": "channel",
       "name": "general",
       "isAllUsers": true,
       "users": [],
@@ -224,7 +235,7 @@
     },
     "C-98EC88EE-56AC-4C5F-8D5F-A5B171D2CDE1": {
       "id": "C-98EC88EE-56AC-4C5F-8D5F-A5B171D2CDE1",
-      "type": "chanel",
+      "type": "channel",
       "name": "random",
       "isAllUsers": true,
       "users": [],
@@ -234,7 +245,7 @@
     },
     "C-15A97A61-F619-416F-863F-B42F178FA299": {
       "id": "C-15A97A61-F619-416F-863F-B42F178FA299",
-      "type": "chanel",
+      "type": "channel",
       "name": "Chanel 1",
       "isAllUsers": false,
       "users": [
@@ -248,20 +259,17 @@
     },
     "C-563B1E15-E612-4D52-8735-3B808A9525A8": {
       "id": "C-563B1E15-E612-4D52-8735-3B808A9525A8",
-      "type": "chanel",
+      "type": "channel",
       "name": "Chanel 2",
       "isAllUsers": false,
-      "users": [
-        "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
-        "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E"
-      ],
+      "users": ["U-B2C9CAAB-9784-452A-85A0-9E927B779A87", "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E"],
       "creator": "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E",
       "created": 1650353609206,
       "latest": 1650353609206
     },
     "C-0BA889E3-B586-4EC1-A141-409C514B27E4": {
       "id": "C-0BA889E3-B586-4EC1-A141-409C514B27E4",
-      "type": "chanel",
+      "type": "channel",
       "name": "general",
       "isAllUsers": true,
       "users": [],
@@ -271,7 +279,7 @@
     },
     "C-37D2EDF3-1F41-401B-AD8D-22DD0F9CE17D": {
       "id": "C-37D2EDF3-1F41-401B-AD8D-22DD0F9CE17D",
-      "type": "chanel",
+      "type": "channel",
       "name": "random",
       "isAllUsers": true,
       "users": [],
@@ -284,7 +292,7 @@
     "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB": {
       "id": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB",
       "name": "Team 1",
-      "chanels": [
+      "channels": [
         "C-F9E04C06-DF6A-4495-B965-AF2D7A15547A",
         "C-98EC88EE-56AC-4C5F-8D5F-A5B171D2CDE1",
         "C-15A97A61-F619-416F-863F-B42F178FA299",
@@ -303,13 +311,11 @@
     "T-23A0D72B-76E5-430D-B528-329048987FF5": {
       "id": "T-23A0D72B-76E5-430D-B528-329048987FF5",
       "name": "Team 2",
-      "chanels": [
+      "channels": [
         "C-0BA889E3-B586-4EC1-A141-409C514B27E4",
         "C-37D2EDF3-1F41-401B-AD8D-22DD0F9CE17D"
       ],
-      "users": [
-        "U-B2C9CAAB-9784-452A-85A0-9E927B779A87"
-      ],
+      "users": ["U-B2C9CAAB-9784-452A-85A0-9E927B779A87"],
       "created": 1650353609201
     }
   }

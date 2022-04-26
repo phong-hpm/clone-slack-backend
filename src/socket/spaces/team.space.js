@@ -10,12 +10,14 @@ const teamSocketHandler = (io) => {
     const namespace = socket.nsp;
     const teamId = namespace.name.replace("/", "");
 
-    socket.on(SocketEvent.EMIT_ADD_CHANEL, (payload) => {});
+    socket.on(SocketEvent.EMIT_ADD_CHANNEL, (payload) => {
+      console.log(SocketEvent.EMIT_ADD_CHANNEL, payload);
+    });
 
-    socket.on(SocketEvent.EMIT_LOAD_CHANELS, ({ userId }) => {
+    socket.on(SocketEvent.EMIT_LOAD_CHANNELS, ({ userId }) => {
       const options = {
         isDeep: true,
-        chanels: {
+        channels: {
           isDeep: true,
           messages: {
             isDeep: false,
@@ -33,7 +35,7 @@ const teamSocketHandler = (io) => {
         },
       };
       teamsServices.getTeamView(teamId, userId, options).then((res) => {
-        socket.emit(SocketEvent.ON_CHANELS, res);
+        socket.emit(SocketEvent.ON_CHANNELS, res);
       });
     });
   });

@@ -1,29 +1,25 @@
-import { chanelIdRegExp } from "../../utils/generateId.js";
+import { channelIdRegExp } from "../../utils/generateId.js";
 
-import * as chanelsServices from "../../services/chanels.service.js";
+import * as channelsServices from "../../services/channels.service.js";
 import * as messagesServices from "../../services/messages.service.js";
 import { SocketEvent, SocketEventDefault } from "../../utils/constant.js";
 
-const chanelSocketHandler = (io) => {
-  const space = io.of(chanelIdRegExp);
+const channelSocketHandler = (io) => {
+  const space = io.of(channelIdRegExp);
 
   space.on(SocketEventDefault.CONNECTION, (socket) => {
     const namespace = socket.nsp;
-    const [teamId, chanelId] = namespace.name.replace("/", "").split("/");
+    const [teamId, channelId] = namespace.name.replace("/", "").split("/");
     // fetch existing users
     const users = [];
     for (let [id, socket] of io.of(namespace.name).sockets) {
-      users.push({
-        sId: id,
-        name: socket.name,
-        email: socket.email,
-      });
+      users.push({ sId: id, name: socket.name, email: socket.email });
     }
     socket.emit("users", users);
 
     socket.on(SocketEvent.EMIT_ADD_MESSAGE, (payload) => {
       const { userId, data } = payload;
-      messagesServices.add({ teamId, chanelId, userId, text: data.text }).then((res) => {
+      messagesServices.add({ teamId, channelId, userId, text: data.text }).then((res) => {
         io.of(namespace.name).emit(SocketEvent.ON_NEW_MESSAGE, res);
       });
     });
@@ -36,7 +32,7 @@ const chanelSocketHandler = (io) => {
         limit,
       };
 
-      chanelsServices.getChanelHistory(chanelId, options).then((res) => {
+      channelsServices.getChanelHistory(channelId, options).then((res) => {
         socket.emit(SocketEvent.ON_MESSAGES, res);
       });
     });
@@ -45,4 +41,4 @@ const chanelSocketHandler = (io) => {
   return space;
 };
 
-export default chanelSocketHandler;
+export default channelSocketHandler;

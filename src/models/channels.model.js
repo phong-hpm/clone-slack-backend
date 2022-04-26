@@ -3,18 +3,18 @@ import { generateId } from "../utils/generateId.js";
 
 export const getChanel = async (id) => {
   try {
-    const chanels = await getTable("chanels");
-    return chanels[id];
+    const channels = await getTable("channels");
+    return channels[id];
   } catch {
     return null;
   }
 };
 
-export const createChanel = async (chanel) => {
+export const createChanel = async (channel) => {
   try {
     const id = generateId();
-    const chanels = getTable("chanels");
-    chanels[id] = chanel;
+    const channels = getTable("channels");
+    channels[id] = channel;
     await writeData();
     return true;
   } catch (e) {

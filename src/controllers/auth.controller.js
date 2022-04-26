@@ -85,5 +85,5 @@ export const refreshToken = async (req, res) => {
   const newAccessToken = await authMethods.generateAccessToken({ id, email });
   if (!newAccessToken) return res.status(400).send("Refresh token failed, try later");
 
-  res.send({ accessToken: newAccessToken, refreshToken });
+  res.send({ accessToken: newAccessToken });
 };

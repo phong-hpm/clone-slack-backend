@@ -46,7 +46,7 @@ export const login = async ({ email, password }) => {
 
   const userView = await getUserView(user.id, {
     isDeep: true,
-    teams: { isDeep: true, chanels: { isDeep: false } },
+    teams: { isDeep: true, channels: { isDeep: false } },
   });
 
   // update new refresh token
