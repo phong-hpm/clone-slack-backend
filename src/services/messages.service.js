@@ -5,13 +5,24 @@ export const getById = async (id) => {
   return await messagesModel.getMessage(id);
 };
 
-export const getHistory = async (limit) => {
-  const messages = await messagesModel.getMessages(limit);
-  return messages;
-};
-
-export const add = async ({ teamId, channelId, userId, text, type = "message" }) => {
-  const message = await messagesModel.createMessage({ text, type, team: teamId, user: userId });
+export const add = async ({ teamId, channelId, userId, delta, type = "message" }) => {
+  const message = await messagesModel.createMessage({ delta, type, team: teamId, user: userId });
   await channelMessagesModel.createChanelMessage(channelId, message.id);
   return message;
+};
+
+export const edit = async ({ messageId, delta }) => {
+  return await messagesModel.updateMessage({ id: messageId, delta });
+};
+
+export const remove = async (messageId) => {
+  return await messagesModel.removeMessage(messageId);
+};
+
+export const star = async (messageId) => {
+  return await messagesModel.starMessage(messageId);
+};
+
+export const reaction = async (userId, messageId, reactionId) => {
+  return await messagesModel.reactionMessage(userId, messageId, reactionId);
 };

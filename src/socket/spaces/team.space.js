@@ -10,6 +10,20 @@ const teamSocketHandler = (io) => {
     const namespace = socket.nsp;
     const teamId = namespace.name.replace("/", "");
 
+    // on users online
+    socket.broadcast.emit(SocketEvent.ON_USER_ONLINE, socket.userId);
+
+    // fetch existing users
+    const connectedUsers = [];
+    for (let [id, socket] of io.of(namespace.name).sockets) {
+      connectedUsers.push({
+        sId: id,
+        userId: socket.userId,
+        name: socket.name,
+        email: socket.email,
+      });
+    }
+
     socket.on(SocketEvent.EMIT_ADD_CHANNEL, (payload) => {
       console.log(SocketEvent.EMIT_ADD_CHANNEL, payload);
     });
@@ -35,7 +49,14 @@ const teamSocketHandler = (io) => {
         },
       };
       teamsServices.getTeamView(teamId, userId, options).then((res) => {
-        socket.emit(SocketEvent.ON_CHANNELS, res);
+        let users = [];
+        users = res.users.map((user) => {
+          return {
+            ...user,
+            isOnline: connectedUsers.findIndex(({ userId }) => userId === user.id) !== -1,
+          };
+        });
+        socket.emit(SocketEvent.ON_CHANNELS, { ...res, users });
       });
     });
   });

@@ -8,11 +8,12 @@ import * as authMethods from "../methods/auth.method.js";
 import { SocketEvent, SocketEventDefault } from "../utils/constant.js";
 
 const authMiddleware = async (socket, next) => {
-  const { name, email, accessToken } = socket.handshake.auth;
+  const { userId, name, email, accessToken } = socket.handshake.auth;
 
   const { error, payload } = await authMethods.verifyToken(accessToken);
   if (error) return next(new Error(error));
 
+  socket.userId = userId;
   socket.name = name;
   socket.email = email;
   socket.accessToken = accessToken;
@@ -29,6 +30,7 @@ const authMiddleware = async (socket, next) => {
   // clear timeout after disconnect
   socket.on(SocketEventDefault.DISCONNECT, () => {
     if (socket.timeoutTokenId) clearTimeout(socket.timeoutTokenId);
+    socket.emit(SocketEvent.ON_USER_OFFLINE, socket.userId);
   });
   next();
 };

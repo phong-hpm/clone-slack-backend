@@ -10,19 +10,8 @@ const channelSocketHandler = (io) => {
   space.on(SocketEventDefault.CONNECTION, (socket) => {
     const namespace = socket.nsp;
     const [teamId, channelId] = namespace.name.replace("/", "").split("/");
-    // fetch existing users
-    const users = [];
-    for (let [id, socket] of io.of(namespace.name).sockets) {
-      users.push({ sId: id, name: socket.name, email: socket.email });
-    }
-    socket.emit("users", users);
-
-    socket.on(SocketEvent.EMIT_ADD_MESSAGE, (payload) => {
-      const { userId, data } = payload;
-      messagesServices.add({ teamId, channelId, userId, text: data.text }).then((res) => {
-        io.of(namespace.name).emit(SocketEvent.ON_NEW_MESSAGE, res);
-      });
-    });
+    socket.teamId = teamId;
+    socket.channelId = channelId;
 
     socket.on(SocketEvent.EMIT_LOAD_MESSAGES, (payload) => {
       const { limit = 2 } = payload;
@@ -33,7 +22,54 @@ const channelSocketHandler = (io) => {
       };
 
       channelsServices.getChanelHistory(channelId, options).then((res) => {
-        socket.emit(SocketEvent.ON_MESSAGES, res);
+        setTimeout(() => {
+          socket.emit(SocketEvent.ON_MESSAGES, res);
+        }, 0);
+      });
+    });
+
+    // emit new message
+    socket.on(SocketEvent.EMIT_ADD_MESSAGE, (payload) => {
+      const { userId, data } = payload;
+      messagesServices.add({ teamId, channelId, userId, delta: data.delta }).then((res) => {
+        io.of(namespace.name).emit(SocketEvent.ON_ADDED_MESSAGE, res);
+      });
+    });
+
+    // emit edit message
+    socket.on(SocketEvent.EMIT_EDIT_MESSAGE, (payload) => {
+      const { data } = payload;
+      messagesServices.edit({ messageId: data.id, delta: data.delta }).then((res) => {
+        if (!res) return;
+        io.of(namespace.name).emit(SocketEvent.ON_EDITED_MESSAGE, res);
+      });
+    });
+
+    // emit remove message
+    socket.on(SocketEvent.EMIT_REMOVE_MESSAGE, (payload) => {
+      const { data } = payload;
+      messagesServices.remove(data.id).then((res) => {
+        if (!res) return;
+        io.of(namespace.name).emit(SocketEvent.ON_REMOVED_MESSAGE, res);
+      });
+    });
+
+    // emit start message
+    socket.on(SocketEvent.EMIT_STAR_MESSAGE, (payload) => {
+      console.log(socket.userId);
+      const { data } = payload;
+      messagesServices.star(data.id).then((res) => {
+        if (!res) return;
+        io.of(namespace.name).emit(SocketEvent.ON_EDITED_MESSAGE, res);
+      });
+    });
+
+    // emit reaction message
+    socket.on(SocketEvent.EMIT_REACTION_MESSAGE, (payload) => {
+      const { data } = payload;
+      messagesServices.reaction(socket.userId, data.id, data.reactionId).then((res) => {
+        if (!res) return;
+        io.of(namespace.name).emit(SocketEvent.ON_EDITED_MESSAGE, res);
       });
     });
   });

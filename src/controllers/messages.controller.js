@@ -1,11 +1,5 @@
 import * as services from "../services/messages.service.js";
 
-export const getAll = async (req, res) => {
-  const { channelId } = req.params;
-  const messages = await services.getMessages(channelId);
-  res.send(messages);
-};
-
 export const add = async (req, res) => {
   const { channelId } = req.params;
   const { postData } = req.body;
