@@ -29,8 +29,8 @@ const authMiddleware = async (socket, next) => {
 
   // clear timeout after disconnect
   socket.on(SocketEventDefault.DISCONNECT, () => {
+    socket.broadcast.emit(SocketEvent.ON_USER_OFFLINE, socket.userId);
     if (socket.timeoutTokenId) clearTimeout(socket.timeoutTokenId);
-    socket.emit(SocketEvent.ON_USER_OFFLINE, socket.userId);
   });
   next();
 };

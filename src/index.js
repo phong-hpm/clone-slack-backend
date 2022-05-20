@@ -3,6 +3,7 @@ import { createServer } from "http";
 import bodyParser from "body-parser";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import fileUpload from "express-fileupload";
 
 import routes from "./routes/index.js";
 
@@ -17,9 +18,15 @@ setupSocket(httpServer);
 
 // parse application/json
 app.use(bodyParser.json());
+app.use(fileUpload());
+app.use((req, res, next) => {
+  global.domain = `${req.protocol}://${req.get("host")}`;
+  next();
+});
 
 // CORS
-app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+// app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+app.use(cors({ credentials: true, origin: "*" }));
 
 // cookies
 app.use(cookieParser({ httpOnly: true }));

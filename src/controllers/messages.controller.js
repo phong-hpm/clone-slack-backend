@@ -1,24 +1,21 @@
-import * as services from "../services/messages.service.js";
+import * as fileServices from "../services/file.service.js";
 
-export const add = async (req, res) => {
-  const { channelId } = req.params;
-  const { postData } = req.body;
-  const message = await services.addMessage(channelId, postData);
-  res.send(message);
-};
+export const uploadFiles = async (req, res) => {
+  if (!req.files.file) return res.send([]);
 
-export const getById = async (req, res) => {
-  const { channelId, messageId } = req.params;
-  const message = await services.getMessageById(channelId, messageId);
-  res.send(message);
-};
+  let files = [];
 
-export const updateById = async (req, res) => {
-  const { channelId, messageId } = req.params;
-  const { postData } = req.body;
-  const { error, message } = await services.updateMessageById(channelId, messageId, postData);
+  if (req.files.file.name) {
+    // single file
+    files = [req.files.file];
+  } else {
+    // multiple files
+    files = req.files.file;
+  }
+
+  const { error, data } = await fileServices.uploadFiles(files);
 
   if (error) res.status(400).send(error);
 
-  res.send(message);
+  res.send(data);
 };

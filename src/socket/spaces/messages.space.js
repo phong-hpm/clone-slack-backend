@@ -30,10 +30,13 @@ const channelSocketHandler = (io) => {
 
     // emit new message
     socket.on(SocketEvent.EMIT_ADD_MESSAGE, (payload) => {
-      const { userId, data } = payload;
-      messagesServices.add({ teamId, channelId, userId, delta: data.delta }).then((res) => {
-        io.of(namespace.name).emit(SocketEvent.ON_ADDED_MESSAGE, res);
-      });
+      const { data } = payload;
+      const uploadingFiles = data.files.map((file) => ({ ...file, url: "", status: "uploading" }));
+      messagesServices
+        .add({ teamId, channelId, userId: socket.userId, delta: data.delta, files: uploadingFiles })
+        .then((res) => {
+          io.of(namespace.name).emit(SocketEvent.ON_ADDED_MESSAGE, res);
+        });
     });
 
     // emit edit message
@@ -54,9 +57,17 @@ const channelSocketHandler = (io) => {
       });
     });
 
+    // emit remove message file
+    socket.on(SocketEvent.EMIT_REMOVE_MESSAGE_FILE, (payload) => {
+      const { data } = payload;
+      messagesServices.removeFile(data.id, data.fileId).then((res) => {
+        if (!res) return;
+        io.of(namespace.name).emit(SocketEvent.ON_REMOVED_MESSAGE_FILE, res);
+      });
+    });
+
     // emit start message
     socket.on(SocketEvent.EMIT_STAR_MESSAGE, (payload) => {
-      console.log(socket.userId);
       const { data } = payload;
       messagesServices.star(data.id).then((res) => {
         if (!res) return;

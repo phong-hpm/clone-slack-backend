@@ -1,6 +1,17 @@
 import { getTable, writeData } from "../database/index.js";
 import { generateId } from "../utils/generateId.js";
 
+const getDataById = (list, id) => {
+  let index = -1;
+  for (let i = 0; i < list.length; i++) {
+    if (list[i].id === id) {
+      index = i;
+      break;
+    }
+  }
+  return index;
+};
+
 // functions
 const getRawMessage = async (id) => {
   try {
@@ -12,18 +23,6 @@ const getRawMessage = async (id) => {
 };
 
 // services
-const getIndexMessage = async (id) => {
-  const messages = await getTable("messages");
-  let index = -1;
-  for (let i = 0; i < messages.length; i++) {
-    if (messages[i].id === id) {
-      index = i;
-      break;
-    }
-  }
-  return index;
-};
-
 export const getMessage = async (id) => {
   try {
     const message = await getRawMessage(id);
@@ -43,7 +42,7 @@ export const getMessages = async (id) => {
   }
 };
 
-export const createMessage = async ({ delta, team, user, type }) => {
+export const createMessage = async ({ delta, team, user, type, files }) => {
   try {
     const id = `M-${generateId()}`;
     const messages = await getTable("messages");
@@ -55,6 +54,7 @@ export const createMessage = async ({ delta, team, user, type }) => {
       user,
       team,
       reactions: {},
+      files,
     };
     await writeData();
     return getMessage(id);
@@ -74,11 +74,21 @@ export const updateMessage = async ({ id, delta }) => {
 
 export const removeMessage = async (id) => {
   const messages = await getTable("messages");
-  let index = getIndexMessage(id);
+  const index = getDataById(messages, id);
   if (index < 0) return null;
   delete messages[index];
   await writeData();
   return id;
+};
+
+export const removeMessageFile = async (id, fileId) => {
+  const message = await getRawMessage(id);
+  const file = message.files.find((file) => file.id === fileId);
+  if (file) {
+    message.files = message.files.filter((file) => file.id !== fileId);
+    await writeData();
+  }
+  return { message: getMessage(id), file };
 };
 
 export const starMessage = async (id) => {
