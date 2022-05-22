@@ -1,10 +1,10 @@
 import fs from "fs";
 import { checkFileExists } from "../services/file.service.js";
 
-export const getImage = async (req, res) => {
+const getFile = (req, res, type) => {
   const { fileName } = req.params;
   const folderPath = `${process.cwd()}/src/_files`;
-  const filePath = `${folderPath}/image/${fileName}`;
+  const filePath = `${folderPath}/${type}/${fileName}`;
   if (checkFileExists(filePath)) {
     res.sendFile(filePath);
   } else {
@@ -12,15 +12,27 @@ export const getImage = async (req, res) => {
   }
 };
 
-export const getAudio = async (req, res) => {
+const downloadFile = (req, res, type) => {
   const { fileName } = req.params;
   const folderPath = `${process.cwd()}/src/_files`;
-  const filePath = `${folderPath}/audio/${fileName}`;
-  if (checkFileExists(filePath)) {
-    res.sendFile(filePath);
-  } else {
-    res.status(404).send();
-  }
+  const filePath = `${folderPath}/${type}/${fileName}`;
+  res.download(filePath);
+};
+
+export const getImage = async (req, res) => {
+  getFile(req, res, "image");
+};
+
+export const getThumbnail = async (req, res) => {
+  getFile(req, res, "thumb");
+};
+
+export const getAudio = async (req, res) => {
+  getFile(req, res, "audio");
+};
+
+export const downloadAudio = async (req, res) => {
+  downloadFile(req, res, "audio");
 };
 
 export const streamVideo = async (req, res) => {
@@ -59,4 +71,8 @@ export const streamVideo = async (req, res) => {
 
   // Stream the video chunk to the client
   videoStream.pipe(res);
+};
+
+export const downloadVideo = async (req, res) => {
+  downloadFile(req, res, "video");
 };

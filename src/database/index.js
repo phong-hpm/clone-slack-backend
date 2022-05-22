@@ -18,6 +18,7 @@ export const db = new LowWithLodash(adapter);
 export const getTable = async (tableName) => {
   await db.read();
   return db.data[tableName];
+  return JSON.parse(JSON.stringify(db.data[tableName]));
 };
 
 export const writeData = async () => {

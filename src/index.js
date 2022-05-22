@@ -9,6 +9,9 @@ import routes from "./routes/index.js";
 
 import { setupSocket } from "./socket/socket.js";
 
+// for development
+global.delay = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
+
 // express server
 const app = express();
 const httpServer = createServer(app);

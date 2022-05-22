@@ -4,7 +4,8 @@ import * as channelsServices from "../../services/channels.service.js";
 import * as messagesServices from "../../services/messages.service.js";
 import { SocketEvent, SocketEventDefault } from "../../utils/constant.js";
 
-const channelSocketHandler = (io) => {
+const channelSocketHandler = () => {
+  const io = global.io;
   const space = io.of(channelIdRegExp);
 
   space.on(SocketEventDefault.CONNECTION, (socket) => {
@@ -31,9 +32,8 @@ const channelSocketHandler = (io) => {
     // emit new message
     socket.on(SocketEvent.EMIT_ADD_MESSAGE, (payload) => {
       const { data } = payload;
-      const uploadingFiles = data.files.map((file) => ({ ...file, url: "", status: "uploading" }));
       messagesServices
-        .add({ teamId, channelId, userId: socket.userId, delta: data.delta, files: uploadingFiles })
+        .add({ teamId, channelId, userId: socket.userId, delta: data.delta })
         .then((res) => {
           io.of(namespace.name).emit(SocketEvent.ON_ADDED_MESSAGE, res);
         });
@@ -51,9 +51,9 @@ const channelSocketHandler = (io) => {
     // emit remove message
     socket.on(SocketEvent.EMIT_REMOVE_MESSAGE, (payload) => {
       const { data } = payload;
-      messagesServices.remove(data.id).then((res) => {
-        if (!res) return;
-        io.of(namespace.name).emit(SocketEvent.ON_REMOVED_MESSAGE, res);
+      messagesServices.remove(channelId, data.id).then((res) => {
+        if (!res || !res.id) return;
+        io.of(namespace.name).emit(SocketEvent.ON_REMOVED_MESSAGE, res.id);
       });
     });
 

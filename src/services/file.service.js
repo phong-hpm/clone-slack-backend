@@ -3,13 +3,13 @@ import { URL } from "url";
 import { Readable } from "stream";
 import { v4 as uuid } from "uuid";
 
-const typePaths = { VIDEO: "video", AUDIO: "audio", IMAGE: "image" };
-const fileExtension = { VIDEO: "mp4", AUDIO: "wav", IMAGE: "png" };
+export const typePaths = { VIDEO: "video", AUDIO: "audio", THUMB: "thumb" };
+export const fileExtension = { VIDEO: "mp4", AUDIO: "wav", THUMB: "png" };
 
 const getExtensionByType = (type) => {
   if (type === typePaths.VIDEO) return fileExtension.VIDEO;
   if (type === typePaths.AUDIO) return fileExtension.AUDIO;
-  if (type === typePaths.IMAGE) return fileExtension.IMAGE;
+  if (type === typePaths.THUMB) return fileExtension.THUMB;
   return null;
 };
 
@@ -21,41 +21,48 @@ export const checkFileExists = (path) => {
   }
 };
 
-export const uploadFiles = async (files) => {
+export const uploadFile = async (file) => {
   const folderPath = `${process.cwd()}/src/_files`;
+  let typePath = "";
+  let fileName = "";
 
-  const data = [];
+  if (file.mimetype === "video/webm") {
+    typePath = typePaths.VIDEO;
+  } else if (file.mimetype === "audio/webm") {
+    typePath = typePaths.AUDIO;
+  } else if (file.mimetype.split("/")[0] === "image") {
+    typePath = typePaths.THUMB;
+  }
 
-  files.forEach((file) => {
-    let typePath = "";
-    let fileName = "";
+  if (typePath) {
+    fileName = `${uuid()}.${getExtensionByType(typePath)}`;
+    const url = `${global.domain}/files/${typePath}/${fileName}`;
+    const filePath = `${folderPath}/${typePath}/${fileName}`;
 
-    if (file.mimetype === "video/webm") {
-      typePath = typePaths.VIDEO;
-    } else if (file.mimetype === "audio/webm") {
-      typePath = typePaths.AUDIO;
-    } else if (file.mimetype.split("/")[0] === "image") {
-      typePath = typePaths.IMAGE;
-    }
+    const webmReadable = new Readable();
+    webmReadable._read = () => {};
+    webmReadable.push(file.data);
 
-    if (typePath) {
-      fileName = `${uuid()}.${getExtensionByType(typePath)}`;
-      const url = `${global.domain}/files/${typePath}/${fileName}`;
-      const filePath = `${folderPath}/${typePath}/${fileName}`;
+    webmReadable.push(null);
+    const outputWebmStream = fs.createWriteStream(filePath);
+    webmReadable.pipe(outputWebmStream);
 
-      const webmReadable = new Readable();
-      webmReadable._read = () => {};
-      webmReadable.push(file.data);
+    if (process.env.NODE_ENV === "development") await global.delay(500);
 
-      webmReadable.push(null);
-      const outputWebmStream = fs.createWriteStream(filePath);
-      webmReadable.pipe(outputWebmStream);
+    return { id: file.name, url, type: typePath };
+  }
+  return null;
+};
 
-      data.push({ id: file.id, url, type: typePath });
-    }
-  });
+export const uploadFileList = async (files) => {
+  const dataArr = [];
 
-  return { data };
+  for (const file of files) {
+    const data = await uploadFile(file);
+    if (data) dataArr.push(data);
+  }
+
+  return { data: dataArr };
 };
 
 const deleteFileByUrl = (url) => {
@@ -78,4 +85,5 @@ const deleteFileByUrl = (url) => {
 export const deleteFile = async (file) => {
   deleteFileByUrl(file.url);
   deleteFileByUrl(file.thumb);
+  file.thumbList.forEach((url) => deleteFileByUrl(url));
 };

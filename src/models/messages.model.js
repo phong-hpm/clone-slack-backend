@@ -46,6 +46,12 @@ export const createMessage = async ({ delta, team, user, type, files }) => {
   try {
     const id = `M-${generateId()}`;
     const messages = await getTable("messages");
+    const messageFiles = files.map((file) => ({
+      ...file,
+      uploadId: file.id,
+      id: `F-${generateId()}`,
+    }));
+
     messages[id] = {
       id,
       delta,
@@ -54,7 +60,7 @@ export const createMessage = async ({ delta, team, user, type, files }) => {
       user,
       team,
       reactions: {},
-      files,
+      files: messageFiles,
     };
     await writeData();
     return getMessage(id);
@@ -72,17 +78,40 @@ export const updateMessage = async ({ id, delta }) => {
   return getMessage(id);
 };
 
+export const updateMessageFile = async ({ id, fileId, url, thumb, thumbList, status }) => {
+  const message = await getRawMessage(id);
+  if (!message) return null;
+  const file = message.files.find((f) => f.id === fileId);
+  if (!file) return null;
+  if (url) file.url = url;
+  if (thumb) file.thumb = thumb;
+  if (thumbList) file.thumbList = thumbList;
+  if (status) file.status = status;
+  await writeData();
+  return getMessage(id);
+};
+
 export const removeMessage = async (id) => {
   const messages = await getTable("messages");
-  const index = getDataById(messages, id);
-  if (index < 0) return null;
-  delete messages[index];
+  delete messages[id];
   await writeData();
-  return id;
+  return { id };
+};
+
+export const removeAllMessageFiles = async (id) => {
+  const message = await getRawMessage(id);
+  if (!message) return null;
+  message.files = [];
+
+  if (!message.delta.ops) return removeMessage(message.id);
+
+  await writeData();
+  return { message };
 };
 
 export const removeMessageFile = async (id, fileId) => {
   const message = await getRawMessage(id);
+  if (!message) return null;
   const file = message.files.find((file) => file.id === fileId);
   if (file) {
     message.files = message.files.filter((file) => file.id !== fileId);

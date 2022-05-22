@@ -1,9 +1,12 @@
-import { teamIdRegExp } from "../../utils/generateId.js";
-
+//
 import * as teamsServices from "../../services/teams.service.js";
+
+// utils
+import { teamIdRegExp } from "../../utils/generateId.js";
 import { SocketEvent, SocketEventDefault } from "../../utils/constant.js";
 
-const teamSocketHandler = (io) => {
+const teamSocketHandler = () => {
+  const io = global.io;
   const space = io.of(teamIdRegExp);
 
   space.on(SocketEventDefault.CONNECTION, (socket) => {

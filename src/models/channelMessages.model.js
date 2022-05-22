@@ -20,3 +20,15 @@ export const createChanelMessage = async (channelId, messageId) => {
     return null;
   }
 };
+
+export const removeChanelMessage = async (channelId, messageId) => {
+  try {
+    const channelMessages = await getTable("channel_messages");
+    if (!channelMessages[channelId]) return null;
+    channelMessages[channelId] = channelMessages[channelId].filter((mesId) => mesId !== messageId);
+    await writeData();
+    return messageId;
+  } catch (e) {
+    return null;
+  }
+};

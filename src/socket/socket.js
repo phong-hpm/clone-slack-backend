@@ -36,10 +36,10 @@ const authMiddleware = async (socket, next) => {
 };
 
 export const setupSocket = (httpServer) => {
-  const io = new Server(httpServer, {
+  global.io = new Server(httpServer, {
     cors: { origin: "http://localhost:3000", credentials: true },
   });
 
-  teamSocketHandler(io).use(authMiddleware);
-  messagesSocketHandler(io).use(authMiddleware);
+  teamSocketHandler().use(authMiddleware);
+  messagesSocketHandler().use(authMiddleware);
 };
