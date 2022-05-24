@@ -1,4 +1,5 @@
 //
+import { clearChannelUnreadMessageCount } from "../../services/channels.service.js";
 import * as teamsServices from "../../services/teams.service.js";
 
 // utils
@@ -7,25 +8,22 @@ import { SocketEvent, SocketEventDefault } from "../../utils/constant.js";
 
 const teamSocketHandler = () => {
   const io = global.io;
-  const space = io.of(teamIdRegExp);
+  const ioTeams = io.teams;
+  const workspace = io.of(teamIdRegExp);
 
-  space.on(SocketEventDefault.CONNECTION, (socket) => {
+  workspace.on(SocketEventDefault.CONNECTION, (socket) => {
     const namespace = socket.nsp;
-    const teamId = namespace.name.replace("/", "");
+    const teamId = namespace.name.slice(1);
+
+    if (!ioTeams[`/${teamId}`]) {
+      ioTeams[`/${teamId}`] = { channels: {}, userSocketIds: {} };
+    }
+
+    const teamUserSocketIds = ioTeams[`/${teamId}`].userSocketIds;
+    teamUserSocketIds[socket.userId] = socket.id;
 
     // on users online
     socket.broadcast.emit(SocketEvent.ON_USER_ONLINE, socket.userId);
-
-    // fetch existing users
-    const connectedUsers = [];
-    for (let [id, socket] of io.of(namespace.name).sockets) {
-      connectedUsers.push({
-        sId: id,
-        userId: socket.userId,
-        name: socket.name,
-        email: socket.email,
-      });
-    }
 
     socket.on(SocketEvent.EMIT_ADD_CHANNEL, (payload) => {
       console.log(SocketEvent.EMIT_ADD_CHANNEL, payload);
@@ -52,19 +50,25 @@ const teamSocketHandler = () => {
         },
       };
       teamsServices.getTeamView(teamId, userId, options).then((res) => {
-        let users = [];
-        users = res.users.map((user) => {
-          return {
-            ...user,
-            isOnline: connectedUsers.findIndex(({ userId }) => userId === user.id) !== -1,
-          };
-        });
+        const users = res.users.map((user) => ({
+          ...user,
+          isOnline: !!teamUserSocketIds[user.id],
+        }));
         socket.emit(SocketEvent.ON_CHANNELS, { ...res, users });
       });
     });
+
+    socket.on(SocketEvent.EMIT_RESET_CHANNEL_UNREAD_MESSAGE_COUNT, async ({ channelId }) => {
+      await clearChannelUnreadMessageCount({ id: channelId, users: [socket.userId] });
+      socket.emit(SocketEvent.ON_EDITED_CHANNEL_UNREAD_MESSAGE_COUNT, channelId, 0);
+    });
+
+    socket.on(SocketEventDefault.DISCONNECT, () => {
+      delete teamUserSocketIds[socket.userId];
+    });
   });
 
-  return space;
+  return workspace;
 };
 
 export default teamSocketHandler;

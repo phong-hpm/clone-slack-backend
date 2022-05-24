@@ -28,8 +28,7 @@ app.use((req, res, next) => {
 });
 
 // CORS
-// app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
-app.use(cors({ credentials: true, origin: "*" }));
+app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 
 // cookies
 app.use(cookieParser({ httpOnly: true }));

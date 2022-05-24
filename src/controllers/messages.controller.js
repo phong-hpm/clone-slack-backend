@@ -2,15 +2,61 @@ import * as fileServices from "../services/file.service.js";
 import * as messagesServices from "../services/messages.service.js";
 import { SocketEvent } from "../utils/constant.js";
 
-const forceToArray = (files = {}) => {
+const readFileAsArray = (files = {}) => {
   const result = {};
 
   for (const [key, val] of Object.entries(files)) {
-    if (Array.isArray(val)) result[key] = val;
-    else result[key] = [val];
+    if (val.mimetype === fileServices.mimeType.JSON) {
+      result[key] = JSON.parse(val.data.toString());
+    } else if (Array.isArray(val)) {
+      result[key] = val;
+    } else {
+      result[key] = [val];
+    }
   }
 
   return result;
+};
+
+const validateFiles = (req) => {
+  let errorMessage = "";
+  const {
+    file: files,
+    thumb: fileThumbs,
+    thumbList: fileThumbList,
+    fileData,
+    delta,
+  } = readFileAsArray(req.files);
+
+  if ((!delta || !delta.ops) && (!files || !files.length)) {
+    errorMessage = "missing delta/file";
+  }
+
+  for (const file of files) {
+    if (errorMessage) break;
+
+    if (!fileData.find((data) => data.id === file.name)) {
+      errorMessage = `missing data of ${file.name}`;
+      break;
+    }
+
+    if (file.mineType === fileServices.mimeType.VIDEO) {
+      if (!fileThumbs.find((f) => f.name === file.name)) {
+        errorMessage = `missing thumb of ${file.name}`;
+        break;
+      }
+      if (!fileThumbs.find((f) => f.name === file.name)) {
+        errorMessage = `missing thumb of ${file.name}`;
+        break;
+      }
+      if (!fileThumbList.filter((f) => f.name === file.name) < 5) {
+        errorMessage = `missing thumbnail of ${file.name}`;
+        break;
+      }
+    }
+  }
+
+  return errorMessage;
 };
 
 export const uploadMessageWithFiles = async (req, res) => {
@@ -21,18 +67,18 @@ export const uploadMessageWithFiles = async (req, res) => {
   if (!teamId) errorMessage = "missing teamId";
   if (!channelId) errorMessage = "missing channelId";
 
-  if (!req.files || !req.files.file) errorMessage = "missing files";
-  if (!req.files || !req.files.thumb) errorMessage = "missing thumbs";
-  if (!req.files || !req.files.thumbList) errorMessage = "missing thumbList";
-  if (!req.files || !req.files.fileData) errorMessage = "missing file data";
-  if (!req.files || !req.files.delta) errorMessage = "missing delta";
+  const {
+    file: files = [],
+    thumb: fileThumbs = [],
+    thumbList: fileThumbList = [],
+    fileData = [],
+    delta: messageDelta = {},
+  } = readFileAsArray(req.files);
+
+  errorMessage = validateFiles(req);
 
   if (errorMessage) return res.status(400).send({ error: errorMessage });
   else res.send({ status: "uploading" });
-
-  const fileData = JSON.parse(req.files.fileData.data.toString());
-  const messageDelta = JSON.parse(req.files.delta.data.toString());
-  const { file: files, thumb: fileThumbs, thumbList: fileThumbList } = forceToArray(req.files);
 
   const mappedFileList = files.map((file) => {
     const thumbList = fileThumbList.filter((f) => f.name === file.name);
@@ -43,7 +89,7 @@ export const uploadMessageWithFiles = async (req, res) => {
   const io = global.io;
   const socketSpace = io.of(socketNamespace);
 
-  let message = await messagesServices.add({
+  let { message } = await messagesServices.add({
     userId,
     teamId,
     channelId,

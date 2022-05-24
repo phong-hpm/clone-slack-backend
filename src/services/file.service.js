@@ -3,6 +3,12 @@ import { URL } from "url";
 import { Readable } from "stream";
 import { v4 as uuid } from "uuid";
 
+export const mimeType = {
+  VIDEO: "video/webm",
+  AUDIO: "audio/webm",
+  THUMB: "imgage/png",
+  JSON: "application/json",
+};
 export const typePaths = { VIDEO: "video", AUDIO: "audio", THUMB: "thumb" };
 export const fileExtension = { VIDEO: "mp4", AUDIO: "wav", THUMB: "png" };
 

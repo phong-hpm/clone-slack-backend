@@ -1,16 +1,16 @@
 import { getTable, writeData } from "../database/index.js";
 import { generateId } from "../utils/generateId.js";
 
-const getDataById = (list, id) => {
-  let index = -1;
-  for (let i = 0; i < list.length; i++) {
-    if (list[i].id === id) {
-      index = i;
-      break;
-    }
-  }
-  return index;
-};
+// const getDataById = (list, id) => {
+//   let index = -1;
+//   for (let i = 0; i < list.length; i++) {
+//     if (list[i].id === id) {
+//       index = i;
+//       break;
+//     }
+//   }
+//   return index;
+// };
 
 // functions
 const getRawMessage = async (id) => {
@@ -46,7 +46,7 @@ export const createMessage = async ({ delta, team, user, type, files }) => {
   try {
     const id = `M-${generateId()}`;
     const messages = await getTable("messages");
-    const messageFiles = files.map((file) => ({
+    const messageFiles = (files || []).map((file) => ({
       ...file,
       uploadId: file.id,
       id: `F-${generateId()}`,
@@ -65,6 +65,7 @@ export const createMessage = async ({ delta, team, user, type, files }) => {
     await writeData();
     return getMessage(id);
   } catch (e) {
+    console.log(e);
     return null;
   }
 };

@@ -40,6 +40,8 @@ export const setupSocket = (httpServer) => {
     cors: { origin: "http://localhost:3000", credentials: true },
   });
 
+  global.io.teams = {};
+
   teamSocketHandler().use(authMiddleware);
   messagesSocketHandler().use(authMiddleware);
 };

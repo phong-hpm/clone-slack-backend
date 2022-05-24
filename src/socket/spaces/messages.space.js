@@ -1,20 +1,37 @@
 import { channelIdRegExp } from "../../utils/generateId.js";
 
-import * as channelsServices from "../../services/channels.service.js";
+import {
+  getChanelHistory,
+  clearChannelUnreadMessageCount,
+} from "../../services/channels.service.js";
 import * as messagesServices from "../../services/messages.service.js";
 import { SocketEvent, SocketEventDefault } from "../../utils/constant.js";
 
 const channelSocketHandler = () => {
   const io = global.io;
-  const space = io.of(channelIdRegExp);
+  const workspace = io.of(channelIdRegExp);
 
-  space.on(SocketEventDefault.CONNECTION, (socket) => {
+  workspace.on(SocketEventDefault.CONNECTION, (socket) => {
     const namespace = socket.nsp;
-    const [teamId, channelId] = namespace.name.replace("/", "").split("/");
+    const [teamId, channelId] = namespace.name.slice(1).split("/");
     socket.teamId = teamId;
     socket.channelId = channelId;
 
-    socket.on(SocketEvent.EMIT_LOAD_MESSAGES, (payload) => {
+    if (!io.teams[`/${teamId}`]) {
+      io.teams[`/${teamId}`] = { channels: {}, userSocketIds: {} };
+    }
+
+    const ioCurrentTeam = io.teams[`/${teamId}`];
+
+    if (!ioCurrentTeam[`/${channelId}`]) {
+      ioCurrentTeam[`/${channelId}`] = { userSocketIds: {} };
+    }
+
+    const teamUserSocketIds = ioCurrentTeam.userSocketIds;
+    const channelUserSocketIds = ioCurrentTeam[`/${channelId}`].userSocketIds;
+    channelUserSocketIds[socket.userId] = socket.id;
+
+    socket.on(SocketEvent.EMIT_LOAD_MESSAGES, async (payload) => {
       const { limit = 2 } = payload;
 
       const options = {
@@ -22,21 +39,40 @@ const channelSocketHandler = () => {
         limit,
       };
 
-      channelsServices.getChanelHistory(channelId, options).then((res) => {
-        setTimeout(() => {
-          socket.emit(SocketEvent.ON_MESSAGES, res);
-        }, 0);
-      });
+      const history = await getChanelHistory(channelId, options);
+      socket.emit(SocketEvent.ON_MESSAGES, channelId, history);
+
+      // clear [unreadMessageCount] for this [userId] in [channelId]
+      await clearChannelUnreadMessageCount({ id: channelId, users: [socket.userId] });
+      io.of(`/${teamId}`)
+        .to(teamUserSocketIds[socket.userId])
+        .emit(SocketEvent.ON_EDITED_CHANNEL_UNREAD_MESSAGE_COUNT, channelId, 0);
     });
 
     // emit new message
-    socket.on(SocketEvent.EMIT_ADD_MESSAGE, (payload) => {
+    socket.on(SocketEvent.EMIT_ADD_MESSAGE, async (payload) => {
       const { data } = payload;
-      messagesServices
-        .add({ teamId, channelId, userId: socket.userId, delta: data.delta })
-        .then((res) => {
-          io.of(namespace.name).emit(SocketEvent.ON_ADDED_MESSAGE, res);
-        });
+
+      // add new message
+      const addParams = { teamId, channelId, userId: socket.userId, delta: data.delta };
+      const { message, unreadMessageCount } = await messagesServices.add(addParams);
+
+      // emit new messages added
+      io.of(namespace.name).emit(SocketEvent.ON_ADDED_MESSAGE, message);
+
+      // emit update unreadMeesageCount to [teamId] socket's users who is in [channelId]
+      for (const [userId, unreadCount] of Object.entries(unreadMessageCount)) {
+        // dont send to connected users, because they are reading this channel
+        if (channelUserSocketIds[userId]) {
+          continue;
+        }
+        const socketId = teamUserSocketIds[userId];
+        if (socketId) {
+          io.of(`/${teamId}`)
+            .to(socketId)
+            .emit(SocketEvent.ON_EDITED_CHANNEL_UNREAD_MESSAGE_COUNT, channelId, unreadCount);
+        }
+      }
     });
 
     // emit edit message
@@ -83,9 +119,13 @@ const channelSocketHandler = () => {
         io.of(namespace.name).emit(SocketEvent.ON_EDITED_MESSAGE, res);
       });
     });
+
+    socket.on(SocketEventDefault.DISCONNECT, () => {
+      delete channelUserSocketIds[socket.userId];
+    });
   });
 
-  return space;
+  return workspace;
 };
 
 export default channelSocketHandler;

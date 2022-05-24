@@ -1,6 +1,7 @@
 import * as messagesModel from "../models/messages.model.js";
 import * as channelMessagesModel from "../models/channelMessages.model.js";
 import { deleteFile } from "./file.service.js";
+import { updateChannelModify, increateChannelUnreadMessageCount } from "./channels.service.js";
 
 export const getById = async (id) => {
   return await messagesModel.getMessage(id);
@@ -15,7 +16,13 @@ export const add = async ({ teamId, channelId, userId, delta, type = "message", 
     files,
   });
   await channelMessagesModel.createChanelMessage(channelId, message.id);
-  return message;
+
+  await updateChannelModify({ id: channelId, latestModify: message.created });
+  const { unreadMessageCount } = await increateChannelUnreadMessageCount({
+    id: channelId,
+    ignoreUsers: [userId],
+  });
+  return { message, unreadMessageCount };
 };
 
 export const edit = async ({ messageId, delta }) => {
