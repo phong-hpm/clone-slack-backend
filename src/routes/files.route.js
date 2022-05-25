@@ -4,6 +4,7 @@ import * as filesController from "#controllers/files.controller.js";
 
 const router = new Router({ mergeParams: true });
 
+router.get("/avatar/:fileName", filesController.getAvatar);
 router.get("/image/:fileName", filesController.getImage);
 router.get("/thumb/:fileName", filesController.getThumbnail);
 router.get("/audio/:fileName", filesController.getAudio);

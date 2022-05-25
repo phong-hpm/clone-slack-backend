@@ -71,7 +71,7 @@ export const uploadFileList = async (files) => {
   return { data: dataArr };
 };
 
-const deleteFileByUrl = (url) => {
+const deleteFileByUrl = async (url) => {
   try {
     const rootPath = `${process.cwd()}/src`;
     const pathName = new URL(url).pathname;
@@ -88,7 +88,7 @@ const deleteFileByUrl = (url) => {
   }
 };
 
-export const deleteFile = (file) => {
+export const deleteFile = async (file) => {
   deleteFileByUrl(file.url);
   deleteFileByUrl(file.thumb);
   file.thumbList.forEach((url) => deleteFileByUrl(url));

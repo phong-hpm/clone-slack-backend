@@ -27,6 +27,10 @@ const downloadFile = (req, res, type) => {
   }
 };
 
+export const getAvatar = async (req, res) => {
+  getFile(req, res, "avatar");
+};
+
 export const getImage = async (req, res) => {
   getFile(req, res, "image");
 };

@@ -2,14 +2,14 @@ import { channelMessagesTable, channelsTable, teamsTable } from "#database/apis/
 
 import { generateId } from "#utils/generateId.js";
 
-export const getChanel = (id) => {
+export const getChannelById = async (id) => {
   return channelsTable.readById(id);
 };
 
-export const createChannel = ({ teamId, userId, name, desc = "" }) => {
-  if (!teamId || !userId || !name) return null;
+export const createChannel = async ({ teamId, userId, name, desc = "" }) => {
+  if (!userId || !name) return null;
 
-  let team = teamsTable.readById(teamId);
+  let team = await teamsTable.readById(teamId);
 
   const unreadMessageCount = {};
   // map [unreadMessageCount] from [teamUSers]
@@ -17,7 +17,7 @@ export const createChannel = ({ teamId, userId, name, desc = "" }) => {
 
   // create channel
   const channelId = `C-${generateId()}`;
-  channelsTable.insert(channelId, {
+  const newChannel = await channelsTable.insert(channelId, {
     id: channelId,
     type: "channel",
     name,
@@ -30,22 +30,21 @@ export const createChannel = ({ teamId, userId, name, desc = "" }) => {
   });
 
   // add [channelId] to [team.channels]
-  team = teamsTable.readById(teamId);
   const teamChannels = [...team.channels, channelId];
-  teamsTable.update(teamId, { channels: teamChannels });
+  await teamsTable.update(teamId, { channels: teamChannels });
 
   // init data [channelMessages]
-  channelMessagesTable.insert(channelId, []);
+  await channelMessagesTable.insert(channelId, []);
 
-  return getChanel(channelId);
+  return newChannel;
 };
 
-export const updateChannel = (id, data) => {
+export const updateChannel = async (id, data) => {
   return channelsTable.update(id, data);
 };
 
-export const increateUnread = ({ id, ignoreUsers = [] }) => {
-  const channel = channelsTable.readById(id);
+export const increateUnread = async ({ id, ignoreUsers = [] }) => {
+  const channel = await channelsTable.readById(id);
   const unreadMessageCount = { ...channel.unreadMessageCount };
 
   for (const [id] of Object.entries(unreadMessageCount)) {
@@ -53,15 +52,15 @@ export const increateUnread = ({ id, ignoreUsers = [] }) => {
     unreadMessageCount[id]++;
   }
 
-  const updatedChannel = channelsTable.update(id, { unreadMessageCount });
+  const updatedChannel = await channelsTable.update(id, { unreadMessageCount });
   return {
     channel: updatedChannel,
     unreadMessageCount: updatedChannel.unreadMessageCount,
   };
 };
 
-export const clearUnread = ({ id, users = [] }) => {
-  const channel = channelsTable.readById(id);
+export const clearUnread = async ({ id, users = [] }) => {
+  const channel = await channelsTable.readById(id);
   if (!users.length) return {};
   const unreadMessageCount = { ...channel.unreadMessageCount };
 
@@ -71,7 +70,7 @@ export const clearUnread = ({ id, users = [] }) => {
     unreadMessageCount[userId] = 0;
   });
 
-  const updatedChannel = channelsTable.update(id, { unreadMessageCount });
+  const updatedChannel = await channelsTable.update(id, { unreadMessageCount });
   return {
     channel: updatedChannel,
     unreadMessageCount: updatedChannel.unreadMessageCount,

@@ -4,11 +4,11 @@ import * as channelMessagesModel from "#models/channelMessages.model.js";
 import * as authServices from "./auth.service.js";
 import * as messagesServices from "./messages.service.js";
 
-export const getChanel = async (id) => {
-  return channelsModel.getChanel(id);
+export const getChannel = async (id) => {
+  return channelsModel.getChannelById(id);
 };
 
-const getChanelMessages = async (messageIds = []) => {
+const getChannelMessages = async (messageIds = []) => {
   const messages = [];
   for (let i = 0; i < messageIds.length; i++) {
     const message = await messagesServices.getById(messageIds[i]);
@@ -17,13 +17,15 @@ const getChanelMessages = async (messageIds = []) => {
   return messages;
 };
 
-export const getChanelHistory = async (id) => {
-  const messageIds = await channelMessagesModel.getChanelMessages(id);
-  return await getChanelMessages(messageIds);
+export const getChannelHistory = async (id) => {
+  const messageIds = await channelMessagesModel.getChannelMessages(id);
+  const channel = await channelsModel.getChannelById(id);
+  const messages = await getChannelMessages(messageIds);
+  return { messages, latestModify: channel.latestModify };
 };
 
-export const getChanelView = async (id, userId) => {
-  const channel = await channelsModel.getChanel(id);
+export const getChannelView = async (id, userId) => {
+  const channel = await getChannel(id);
 
   // logged user is not in this channel
   if (!channel.users.includes(userId)) return null;
@@ -45,18 +47,18 @@ export const getChanelView = async (id, userId) => {
   return channel;
 };
 
-export const addChannel = ({ teamId, userId, name, desc }) => {
+export const addChannel = async ({ teamId, userId, name, desc }) => {
   return channelsModel.createChannel({ teamId, userId, name, desc });
 };
 
-export const updateChannelModify = ({ id, latestModify }) => {
+export const updateChannelModify = async (id, { latestModify }) => {
   return channelsModel.updateChannel(id, { latestModify });
 };
 
-export const increateChannelUnreadMessageCount = ({ id, ignoreUsers }) => {
+export const increateChannelUnreadMessageCount = async ({ id, ignoreUsers }) => {
   return channelsModel.increateUnread({ id, ignoreUsers });
 };
 
-export const clearChannelUnreadMessageCount = ({ id, users }) => {
+export const clearChannelUnreadMessageCount = async ({ id, users }) => {
   return channelsModel.clearUnread({ id, users });
 };

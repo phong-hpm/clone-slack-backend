@@ -2,18 +2,18 @@ import { messagesTable } from "#database/apis/index.js";
 import { generateId } from "#utils/generateId.js";
 
 // functions
-const getRawMessage = (id) => {
+const getRawMessage = async (id) => {
   return messagesTable.readById(id);
 };
 
 // services
-export const getMessage = (id) => {
-  const message = getRawMessage(id);
+export const getMessage = async (id) => {
+  const message = await getRawMessage(id);
   message.reactions = [...Object.values(message.reactions)];
   return message;
 };
 
-export const createMessage = ({ delta, team, user, type, files }) => {
+export const createMessage = async ({ delta, team, user, type, files }) => {
   const id = `M-${generateId()}`;
   const messageFiles = (files || []).map((file) => ({
     ...file,
@@ -21,27 +21,31 @@ export const createMessage = ({ delta, team, user, type, files }) => {
     id: `F-${generateId()}`,
   }));
 
+  const now = Date.now();
+
   return messagesTable.insert(id, {
     id,
     delta,
     type,
-    created: Date.now(),
     user,
     team,
     reactions: {},
     files: messageFiles,
+    created: now,
+    updated: now,
   });
 };
 
-export const updateMessage = (id, { delta }) => {
+export const updateMessage = async (id, { delta }) => {
   return messagesTable.update(id, {
     delta,
     isEdited: true,
+    updated: Date.now(),
   });
 };
 
-export const updateMessageFile = (id, { fileId, url, thumb, thumbList, status }) => {
-  const message = messagesTable.readById(id);
+export const updateMessageFile = async (id, { fileId, url, thumb, thumbList, status }) => {
+  const message = await messagesTable.readById(id);
   const fileList = message.files;
   const file = fileList.find((f) => f.id === fileId);
 
@@ -53,28 +57,28 @@ export const updateMessageFile = (id, { fileId, url, thumb, thumbList, status })
   return messagesTable.update(id, { files: fileList });
 };
 
-export const removeMessage = (id) => {
-  messagesTable.remove(id);
+export const removeMessage = async (id) => {
+  await messagesTable.remove(id);
   return id;
 };
 
-export const removeMessageFile = (id, fileId) => {
-  const message = messagesTable.readById(id);
+export const removeMessageFile = async (id, fileId) => {
+  const message = await messagesTable.readById(id);
   const fileList = message.files.filter((file) => file.id !== fileId);
   const removedFile = message.files.find((file) => file.id === fileId);
 
-  const updatedMessage = messagesTable.update(id, { files: fileList });
+  const updatedMessage = await messagesTable.update(id, { files: fileList });
 
   return { message: updatedMessage, file: removedFile };
 };
 
-export const starMessage = (id) => {
-  const message = messagesTable.readById(id);
+export const starMessage = async (id) => {
+  const message = await messagesTable.readById(id);
   return messagesTable.update(id, { isStared: !message.isStared });
 };
 
-export const reactionMessage = (id, { userId, reactionId }) => {
-  const message = messagesTable.readById(id);
+export const reactionMessage = async (id, { userId, reactionId }) => {
+  const message = await messagesTable.readById(id);
   const reactions = message.reactions;
   if (!reactions[reactionId]) {
     reactions[reactionId] = { id: reactionId, users: [], count: 0 };
@@ -90,8 +94,7 @@ export const reactionMessage = (id, { userId, reactionId }) => {
   currentReaction.count = currentReaction.users.length;
   if (!currentReaction.count) delete reactions[reactionId];
 
-  messagesTable.update(id, { reactions });
-  console.log(id);
+  await messagesTable.update(id, { reactions });
   // this method will map [reactions] to array
   return getMessage(id);
 };

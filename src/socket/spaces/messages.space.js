@@ -1,4 +1,4 @@
-import { getChanelHistory, clearChannelUnreadMessageCount } from "#services/channels.service.js";
+import { getChannelHistory, clearChannelUnreadMessageCount } from "#services/channels.service.js";
 import * as messagesServices from "#services/messages.service.js";
 
 import { channelIdRegExp } from "#utils/generateId.js";
@@ -28,6 +28,8 @@ const channelSocketHandler = () => {
     const channelUserSocketIds = ioCurrentTeam[`/${channelId}`].userSocketIds;
     channelUserSocketIds[socket.userId] = socket.id;
 
+    console.log(channelUserSocketIds);
+
     socket.on(SocketEvent.EMIT_LOAD_MESSAGES, async (payload) => {
       try {
         const { limit = 2 } = payload;
@@ -37,8 +39,8 @@ const channelSocketHandler = () => {
           limit,
         };
 
-        const history = await getChanelHistory(channelId, options);
-        socket.emit(SocketEvent.ON_MESSAGES, channelId, history);
+        const { messages, latestModify } = await getChannelHistory(channelId, options);
+        socket.emit(SocketEvent.ON_MESSAGES, { channelId, messages, latestModify });
 
         // clear [unreadMessageCount] for this [userId] in [channelId]
         await clearChannelUnreadMessageCount({ id: channelId, users: [socket.userId] });
@@ -51,27 +53,47 @@ const channelSocketHandler = () => {
     });
 
     // emit new message
-    socket.on(SocketEvent.EMIT_ADD_MESSAGE, (payload) => {
+    socket.on(SocketEvent.EMIT_ADD_MESSAGE, async (payload) => {
       try {
         const { data } = payload;
 
         // add new message
-        const addParams = { teamId, channelId, userId: socket.userId, delta: data.delta };
-        const { message, unreadMessageCount } = messagesServices.add(addParams);
+        const addParams = {
+          teamId,
+          channelId,
+          userId: socket.userId,
+          delta: data.delta,
+          ignoreUsers: Object.keys(channelUserSocketIds), // they are reading this [channelId]
+        };
+        const { message, unreadMessageCount, channel } = await messagesServices.add(addParams);
 
-        // emit new messages added
-        io.of(namespace.name).emit(SocketEvent.ON_ADDED_MESSAGE, message);
+        // emit new messages added to all connected users
+        io.of(namespace.name).emit(SocketEvent.ON_ADDED_MESSAGE, {
+          channelId,
+          message,
+          latestModify: channel.latestModify,
+        });
 
-        // emit update unreadMeesageCount to [teamId] socket's users who is in [channelId]
-        for (const [userId, unreadCount] of Object.entries(unreadMessageCount || {})) {
-          // dont send to connected users, because they are reading this channel
-          if (channelUserSocketIds[userId]) continue;
+        // loop in all users of this [channelId]
+        for (const userId of channel.users) {
+          // send to user who is online
+          if (!teamUserSocketIds[userId]) continue;
 
-          const socketId = teamUserSocketIds[userId];
-          if (socketId) {
+          // send [channel.latestModify] to all users of this [channelId]
+          io.of(`/${teamId}`)
+            .to(teamUserSocketIds[userId])
+            .emit(SocketEvent.ON_EDITED_CHANNEL_LATEST_MOFIDY, channelId, channel.latestModify);
+
+          // send [channel.unreadMessageCount] to all users of this [channelId]
+          //    who haven't connected to because they are NOT reading this channel
+          if (!channelUserSocketIds[userId]) {
             io.of(`/${teamId}`)
-              .to(socketId)
-              .emit(SocketEvent.ON_EDITED_CHANNEL_UNREAD_MESSAGE_COUNT, channelId, unreadCount);
+              .to(teamUserSocketIds[userId])
+              .emit(
+                SocketEvent.ON_EDITED_CHANNEL_UNREAD_MESSAGE_COUNT,
+                channelId,
+                unreadMessageCount[userId]
+              );
           }
         }
       } catch (e) {
@@ -80,32 +102,65 @@ const channelSocketHandler = () => {
     });
 
     // emit edit message
-    socket.on(SocketEvent.EMIT_EDIT_MESSAGE, (payload) => {
+    socket.on(SocketEvent.EMIT_EDIT_MESSAGE, async (payload) => {
       try {
         const { data } = payload;
-        const message = messagesServices.edit(data.id, { delta: data.delta });
-        io.of(namespace.name).emit(SocketEvent.ON_EDITED_MESSAGE, message);
+        const { message, channel } = await messagesServices.edit(data.id, {
+          channelId,
+          delta: data.delta,
+        });
+        io.of(namespace.name).emit(SocketEvent.ON_EDITED_MESSAGE, {
+          channelId,
+          message,
+          latestModify: channel.latestModify,
+        });
+
+        // loop in all users of this [channelId]
+        for (const userId of channel.users) {
+          // send to user who is online
+          if (!teamUserSocketIds[userId]) continue;
+
+          // send [channel.latestModify] to all users of this [channelId]
+          io.of(`/${teamId}`)
+            .to(teamUserSocketIds[userId])
+            .emit(SocketEvent.ON_EDITED_CHANNEL_LATEST_MOFIDY, channelId, channel.latestModify);
+        }
       } catch (e) {
         console.log(e);
       }
     });
 
     // emit remove message
-    socket.on(SocketEvent.EMIT_REMOVE_MESSAGE, (payload) => {
+    socket.on(SocketEvent.EMIT_REMOVE_MESSAGE, async (payload) => {
       try {
         const { data } = payload;
-        const removedId = messagesServices.remove(channelId, data.id);
-        io.of(namespace.name).emit(SocketEvent.ON_REMOVED_MESSAGE, removedId);
+        const { messageId, channel } = await messagesServices.remove(channelId, data.id);
+        io.of(namespace.name).emit(SocketEvent.ON_REMOVED_MESSAGE, {
+          channelId,
+          messageId,
+          latestModify: channel.latestModify,
+        });
+
+        // loop in all users of this [channelId]
+        for (const userId of channel.users) {
+          // send to user who is online
+          if (!teamUserSocketIds[userId]) continue;
+
+          // send [channel.latestModify] to all users of this [channelId]
+          io.of(`/${teamId}`)
+            .to(teamUserSocketIds[userId])
+            .emit(SocketEvent.ON_EDITED_CHANNEL_LATEST_MOFIDY, channelId, channel.latestModify);
+        }
       } catch (e) {
         console.log(e);
       }
     });
 
     // emit remove message file
-    socket.on(SocketEvent.EMIT_REMOVE_MESSAGE_FILE, (payload) => {
+    socket.on(SocketEvent.EMIT_REMOVE_MESSAGE_FILE, async (payload) => {
       try {
         const { data } = payload;
-        const message = messagesServices.removeFile(data.id, data.fileId);
+        const message = await messagesServices.removeFile(data.id, data.fileId);
         io.of(namespace.name).emit(SocketEvent.ON_REMOVED_MESSAGE_FILE, message);
       } catch (e) {
         console.log(e);
@@ -113,10 +168,10 @@ const channelSocketHandler = () => {
     });
 
     // emit start message
-    socket.on(SocketEvent.EMIT_STAR_MESSAGE, (payload) => {
+    socket.on(SocketEvent.EMIT_STAR_MESSAGE, async (payload) => {
       try {
         const { data } = payload;
-        const message = messagesServices.star(data.id);
+        const message = await messagesServices.star(data.id);
         io.of(namespace.name).emit(SocketEvent.ON_EDITED_MESSAGE, message);
       } catch (e) {
         console.log(e);
@@ -124,10 +179,10 @@ const channelSocketHandler = () => {
     });
 
     // emit reaction message
-    socket.on(SocketEvent.EMIT_REACTION_MESSAGE, (payload) => {
+    socket.on(SocketEvent.EMIT_REACTION_MESSAGE, async (payload) => {
       try {
         const { data } = payload;
-        const message = messagesServices.reaction(data.id, {
+        const message = await messagesServices.reaction(data.id, {
           userId: socket.userId,
           reactionId: data.reactionId,
         });

@@ -1,50 +1,61 @@
-import { getDB } from "./index.js";
+import * as lowdb from "lowdb";
+import { join } from "path";
+
+const getDB = (file) => {
+  const jsonPath = `${process.cwd()}/src/database/json`;
+  return new lowdb.Low(new lowdb.JSONFile(join(jsonPath, file)));
+};
 
 export const tableApis = (tableName) => {
   const db = getDB(`${tableName}.json`);
 
-  const read = () => {
-    db.read();
+  const read = async () => {
+    await db.read();
     return db.data;
   };
 
-  const readById = (id) => {
-    const data = read()[id];
+  const readById = async (id) => {
+    const table = await read();
+    const data = table[id];
     if (!data) throw new Error(`[readById] - [${tableName}] failled, '${id}' not existed`);
     return data;
   };
 
-  const validate = (id) => {
-    return !!read()[id];
+  const validate = async (id) => {
+    const table = await read();
+    const data = table[id];
+    return !!data;
   };
 
-  const insert = (id, data) => {
+  const insert = async (id, data) => {
     if (!id) throw new Error(`[insert] to [${tableName}] failled, [id] is '${id}'`);
-    if (validate(id)) throw new Error(`[insert] - [${tableName}] failled, '${id}' existed`);
+    if (await validate(id)) throw new Error(`[insert] - [${tableName}] failled, '${id}' existed`);
 
-    const table = read();
+    const table = await read();
     table[id] = data;
-    db.write();
+    await db.write();
     return readById(id);
   };
 
-  const update = (id, data) => {
+  const update = async (id, data) => {
     if (!id) throw new Error(`[update] to [${tableName}] failled, [id] is '${id}'`);
-    if (!validate(id)) throw new Error(`[update] - [${tableName}] failled, '${id}' not existed`);
+    if (!(await validate(id)))
+      throw new Error(`[update] - [${tableName}] failled, '${id}' not existed`);
 
-    const table = read();
+    const table = await read();
     if (Array.isArray(data)) table[id] = [...(table[id] || []), ...data];
     else table[id] = { ...(table[id] || {}), ...data };
-    db.write();
+    await db.write();
     return readById(id);
   };
 
-  const remove = (id) => {
-    if (!validate(id)) throw new Error(`[remove] - [${tableName}]: failled, '${id}' not existed`);
+  const remove = async (id) => {
+    if (!(await validate(id)))
+      throw new Error(`[remove] - [${tableName}]: failled, '${id}' not existed`);
 
-    const table = read();
+    const table = await read();
     delete table[id];
-    db.write();
+    await db.write();
   };
 
   return {

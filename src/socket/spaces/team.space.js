@@ -2,7 +2,7 @@
 import {
   clearChannelUnreadMessageCount,
   addChannel,
-  getChanelView,
+  getChannelView,
 } from "#services/channels.service.js";
 import * as teamsServices from "#services/teams.service.js";
 
@@ -38,7 +38,7 @@ const teamSocketHandler = () => {
           name: data.name,
           desc: data.desc,
         });
-        const channelView = await getChanelView(channel.id, socket.userId);
+        const channelView = await getChannelView(channel.id, socket.userId);
 
         // emit to users of this channel only
         channel.users.forEach((user) => {
