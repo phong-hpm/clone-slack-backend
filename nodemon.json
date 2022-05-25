@@ -2,5 +2,5 @@
   "exec": "npm run dev",
   "watch": ["src/*", "public/*"],
   "ext": "js, html, css, json",
-  "ignore": ["db.json"]
+  "ignore": ["src/database/json/*"]
 }

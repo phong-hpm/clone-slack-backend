@@ -1,0 +1,626 @@
+{
+  "M-1006A0DA-FD70-4F2E-AFCD-78939B3319FE": {
+    "id": "M-1006A0DA-FD70-4F2E-AFCD-78939B3319FE",
+    "delta": {
+      "ops": [
+        {
+          "insert": "joined #test"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "channel_join",
+    "created": 1651551314849,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-1006A0DA-FD70-4F2E-AFCD-78939B3319FC": {
+    "id": "M-1006A0DA-FD70-4F2E-AFCD-78939B3319FC",
+    "delta": {
+      "ops": [
+        {
+          "insert": "Task list:\ncheck "
+        },
+        {
+          "attributes": {
+            "code": true
+          },
+          "insert": "delta Object"
+        },
+        {
+          "attributes": {
+            "list": "ordered"
+          },
+          "insert": "\n"
+        },
+        {
+          "insert": "try to tag "
+        },
+        {
+          "insert": {
+            "mention": {
+              "id": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87"
+            }
+          }
+        },
+        {
+          "insert": {
+            "mention": {
+              "id": "U-1B10D300-7136-481E-BCC1-5EF49C37FA31"
+            }
+          }
+        },
+        {
+          "insert": {
+            "mention": {
+              "id": "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E"
+            }
+          }
+        },
+        {
+          "attributes": {
+            "list": "ordered"
+          },
+          "insert": "\n"
+        },
+        {
+          "insert": "add link "
+        },
+        {
+          "attributes": {
+            "link": {
+              "text": "new link",
+              "href": "google.com",
+              "url": "https://google.com"
+            }
+          },
+          "insert": "new link"
+        },
+        {
+          "attributes": {
+            "list": "ordered"
+          },
+          "insert": "\n"
+        },
+        {
+          "insert": "done"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1651551314849,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-F7F6C350-E980-415E-A0AD-B52BAEFA5BE0": {
+    "id": "M-F7F6C350-E980-415E-A0AD-B52BAEFA5BE0",
+    "delta": {
+      "ops": [
+        {
+          "insert": {
+            "mention": {
+              "id": "U-1B10D300-7136-481E-BCC1-5EF49C37FA31"
+            }
+          }
+        },
+        {
+          "insert": " \n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1651764856881,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-94F90382-ADDE-41FA-B41E-06880C50B1A2": {
+    "id": "M-94F90382-ADDE-41FA-B41E-06880C50B1A2",
+    "delta": {
+      "ops": [
+        {
+          "insert": "1\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1651916954411,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-BFFB68F8-8476-4DAD-9521-D5CA015F5714": {
+    "id": "M-BFFB68F8-8476-4DAD-9521-D5CA015F5714",
+    "delta": {
+      "ops": [
+        {
+          "insert": "2\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1651916955050,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-E409F26E-1ACE-48DB-A3D5-A96CACF43724": {
+    "id": "M-E409F26E-1ACE-48DB-A3D5-A96CACF43724",
+    "delta": {
+      "ops": [
+        {
+          "insert": "3\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1651916955507,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-87D46ED6-E13E-4EFE-8416-31A6A8B93D56": {
+    "id": "M-87D46ED6-E13E-4EFE-8416-31A6A8B93D56",
+    "delta": {
+      "ops": [
+        {
+          "insert": "4\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1651916955867,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-71E48AE2-9E2F-4B58-A87D-476270031549": {
+    "id": "M-71E48AE2-9E2F-4B58-A87D-476270031549",
+    "delta": {
+      "ops": [
+        {
+          "insert": "5\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1651916956179,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-76FB1236-9103-49A5-A320-F3879F61AB04": {
+    "id": "M-76FB1236-9103-49A5-A320-F3879F61AB04",
+    "delta": {
+      "ops": [
+        {
+          "insert": "6\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1651916956460,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-180AE622-96EF-423E-88E9-18E6401AA2E8": {
+    "id": "M-180AE622-96EF-423E-88E9-18E6401AA2E8",
+    "delta": {
+      "ops": [
+        {
+          "insert": "7\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1651917356460,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB",
+    "isStared": false
+  },
+  "M-5C70FF50-7DBE-456C-9903-30FB38D3C14D": {
+    "id": "M-5C70FF50-7DBE-456C-9903-30FB38D3C14D",
+    "delta": {
+      "ops": [
+        {
+          "insert": "8/1/2021\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1610038800000,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-EECBF0FA-512B-468A-A20D-70BEB02BF66B": {
+    "id": "M-EECBF0FA-512B-468A-A20D-70BEB02BF66B",
+    "delta": {
+      "ops": [
+        {
+          "insert": "7/5/2021\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1620320400000,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-EECBF0FA-512B-468A-A20D-70BEB02BF66C": {
+    "id": "M-EECBF0FA-512B-468A-A20D-70BEB02BF66C",
+    "delta": {
+      "ops": [
+        {
+          "insert": "7/5/2021\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1620320400001,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-C8A3E049-7E55-4062-A250-49FE7E3F059E": {
+    "id": "M-C8A3E049-7E55-4062-A250-49FE7E3F059E",
+    "delta": {
+      "ops": [
+        {
+          "insert": "9/11/2021\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1636390800000,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-48507338-8206-4A60-BAFD-D845B6AFB7C7": {
+    "id": "M-48507338-8206-4A60-BAFD-D845B6AFB7C7",
+    "delta": {
+      "ops": [
+        {
+          "insert": "1/2/2022\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1643648400007,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-04DF79F8-F8B6-46D4-AD71-9E6FAE05374C": {
+    "id": "M-04DF79F8-F8B6-46D4-AD71-9E6FAE05374C",
+    "delta": {
+      "ops": [
+        {
+          "insert": "1/2/2022\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1643648400008,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-F662ACD4-3038-4984-ADC9-2A3D035292C6": {
+    "id": "M-F662ACD4-3038-4984-ADC9-2A3D035292C6",
+    "delta": {
+      "ops": [
+        {
+          "insert": "1/2/2022\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1643648400009,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-E7608B07-7D30-4243-BE89-FFB8F73F6134": {
+    "id": "M-E7608B07-7D30-4243-BE89-FFB8F73F6134",
+    "delta": {
+      "ops": [
+        {
+          "insert": "5/4/2022\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1649091600000,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-23F16238-DDAE-482E-A0FB-1E4D97081C17": {
+    "id": "M-23F16238-DDAE-482E-A0FB-1E4D97081C17",
+    "delta": {
+      "ops": [
+        {
+          "insert": "8/5/2022\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1651942800008,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB",
+    "isStared": false
+  },
+  "M-ACD79D00-4DD4-4E1D-B1DD-CFC3458B5875": {
+    "id": "M-ACD79D00-4DD4-4E1D-B1DD-CFC3458B5875",
+    "delta": {
+      "ops": [
+        {
+          "insert": "8/5/2022\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1651942800009,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-74AFBFF2-F223-4BA3-B871-A3B17F36CBE6": {
+    "id": "M-74AFBFF2-F223-4BA3-B871-A3B17F36CBE6",
+    "delta": {
+      "ops": [
+        {
+          "insert": "a\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1652001447387,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-B3E291E6-DFBE-4B23-AD0A-6D2AE4EF7086": {
+    "id": "M-B3E291E6-DFBE-4B23-AD0A-6D2AE4EF7086",
+    "delta": {
+      "ops": [
+        {
+          "insert": "hello\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1652001860534,
+    "user": "U-1B10D300-7136-481E-BCC1-5EF49C37FA31",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+  },
+  "M-A9DB1183-C221-4495-A301-F80DA3AE0387": {
+    "id": "M-A9DB1183-C221-4495-A301-F80DA3AE0387",
+    "delta": {
+      "ops": [
+        {
+          "insert": "Hi bro "
+        },
+        {
+          "insert": {
+            "mention": {
+              "id": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87"
+            }
+          }
+        },
+        {
+          "insert": " \n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1652002322572,
+    "user": "U-1B10D300-7136-481E-BCC1-5EF49C37FA31",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB",
+    "isStared": false
+  },
+  "M-C863489D-BE1C-4915-9FF3-BC289305CC85": {
+    "id": "M-C863489D-BE1C-4915-9FF3-BC289305CC85",
+    "delta": {
+      "ops": [
+        {
+          "insert": "hi\n"
+        }
+      ]
+    },
+    "reactions": {},
+    "type": "message",
+    "created": 1652009360776,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB",
+    "isStared": false
+  },
+  "M-287D8D29-7998-4BD6-BA7F-3A5D5927A0EF": {
+    "id": "M-287D8D29-7998-4BD6-BA7F-3A5D5927A0EF",
+    "delta": {
+      "ops": [
+        {
+          "insert": "hi\n"
+        }
+      ]
+    },
+    "reactions": {
+      "raised_hands": {
+        "id": "raised_hands",
+        "users": [
+          "U-1B10D300-7136-481E-BCC1-5EF49C37FA31",
+          "U-B2C9CAAB-9784-452A-85A0-9E927B779A87"
+        ],
+        "count": 2
+      }
+    },
+    "type": "message",
+    "created": 1652009367967,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB",
+    "isStared": false
+  },
+  "M-E51C7DB8-98E8-41AE-BD07-08D1D62E988C": {
+    "id": "M-E51C7DB8-98E8-41AE-BD07-08D1D62E988C",
+    "delta": {
+      "ops": [
+        {
+          "insert": "test message\n"
+        }
+      ]
+    },
+    "type": "message",
+    "created": 1652258943582,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB",
+    "reactions": {
+      "raised_hands": {
+        "id": "raised_hands",
+        "users": [
+          "U-B2C9CAAB-9784-452A-85A0-9E927B779A87"
+        ],
+        "count": 1
+      },
+      "white_check_mark": {
+        "id": "white_check_mark",
+        "users": [
+          "U-B2C9CAAB-9784-452A-85A0-9E927B779A87"
+        ],
+        "count": 1
+      }
+    },
+    "isStared": false
+  },
+  "M-7A4521B2-6C6A-4F0B-891C-834B149DF76A": {
+    "id": "M-7A4521B2-6C6A-4F0B-891C-834B149DF76A",
+    "delta": {
+      "ops": [
+        {
+          "insert": {
+            "mention": {
+              "id": "U-1B10D300-7136-481E-BCC1-5EF49C37FA31"
+            }
+          }
+        },
+        {
+          "insert": " "
+        },
+        {
+          "insert": {
+            "mention": {
+              "id": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87"
+            }
+          }
+        },
+        {
+          "insert": " \n"
+        }
+      ]
+    },
+    "type": "message",
+    "created": 1652258957684,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB",
+    "reactions": {},
+    "isStared": true
+  },
+  "M-EFABE635-34A5-4E9F-8A34-243FFE372555": {
+    "id": "M-EFABE635-34A5-4E9F-8A34-243FFE372555",
+    "delta": {},
+    "type": "message",
+    "created": 1652760149205,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-23A0D72B-76E5-430D-B528-329048987FF5",
+    "reactions": {},
+    "files": [
+      {
+        "id": "F-5af588d5-f321-41d5-a4a4-83caab0a98cf",
+        "url": "http://localhost:8000/files/video/V-E3ED5D5B-D189-4E35-9B51-D3A0D6317294.mp4",
+        "created": 1652409677233,
+        "type": "video",
+        "size": 71095407,
+        "mineType": "video/webm",
+        "duration": 512,
+        "thumb": "http://localhost:8000/files/image/I-7B3B6CA1-8F82-41CB-A3DE-7EAD8FC8021E.jpeg",
+        "status": "done",
+        "ratio": "0.5625",
+        "scripts": [
+          {
+            "currentTime": 0,
+            "label": "Welcome"
+          },
+          {
+            "currentTime": 38,
+            "label": "Start"
+          },
+          {
+            "currentTime": 55,
+            "label": "Main Detail"
+          },
+          {
+            "currentTime": 70,
+            "label": "End"
+          }
+        ]
+      }
+    ],
+    "isStared": false
+  },
+  "M-01FC38A1-EF37-48B6-BD41-3CA6AE39DB4A": {
+    "id": "M-01FC38A1-EF37-48B6-BD41-3CA6AE39DB4A",
+    "delta": {
+      "ops": [
+        {
+          "insert": "test\n"
+        }
+      ]
+    },
+    "type": "message",
+    "created": 1653239870226,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB",
+    "reactions": {},
+    "files": []
+  },
+  "M-12B110CC-03C2-4C4E-925A-33FAC3E380DA": {
+    "id": "M-12B110CC-03C2-4C4E-925A-33FAC3E380DA",
+    "delta": {
+      "ops": [
+        {
+          "insert": "aaaaaaa\n"
+        }
+      ]
+    },
+    "type": "message",
+    "created": 1653335740720,
+    "user": "U-1B10D300-7136-481E-BCC1-5EF49C37FA31",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB",
+    "reactions": {},
+    "files": []
+  },
+  "M-7AF98E4A-DC7F-466C-9ADA-7D050B402545": {
+    "id": "M-7AF98E4A-DC7F-466C-9ADA-7D050B402545",
+    "delta": {
+      "ops": [
+        {
+          "insert": "a\n"
+        }
+      ]
+    },
+    "type": "message",
+    "created": 1653462613782,
+    "user": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "team": "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB",
+    "reactions": {},
+    "files": []
+  }
+}

@@ -4,8 +4,8 @@ import teamSocketHandler from "./spaces/team.space.js";
 
 import messagesSocketHandler from "./spaces/messages.space.js";
 
-import * as authMethods from "../methods/auth.method.js";
-import { SocketEvent, SocketEventDefault } from "../utils/constant.js";
+import * as authMethods from "#methods/auth.method.js";
+import { SocketEvent, SocketEventDefault } from "#utils/constant.js";
 
 const authMiddleware = async (socket, next) => {
   const { userId, name, email, accessToken } = socket.handshake.auth;

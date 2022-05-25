@@ -1,5 +1,5 @@
-import * as authMethods from "../methods/auth.method.js";
-import * as userModel from "../models/user.model.js";
+import * as authMethods from "#methods/auth.method.js";
+import * as userModel from "#models/user.model.js";
 
 export const authentication = async (req, res, next) => {
   const { error, payload } = await authMethods.verifyToken(req.headers["x-access-token"]);

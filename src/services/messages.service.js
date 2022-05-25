@@ -1,5 +1,5 @@
-import * as messagesModel from "../models/messages.model.js";
-import * as channelMessagesModel from "../models/channelMessages.model.js";
+import * as messagesModel from "#models/messages.model.js";
+import * as channelMessagesModel from "#models/channelMessages.model.js";
 import { deleteFile } from "./file.service.js";
 import { updateChannelModify, increateChannelUnreadMessageCount } from "./channels.service.js";
 
@@ -7,74 +7,69 @@ export const getById = async (id) => {
   return await messagesModel.getMessage(id);
 };
 
-export const add = async ({ teamId, channelId, userId, delta, type = "message", files }) => {
-  const message = await messagesModel.createMessage({
+export const add = ({ teamId, channelId, userId, delta, type = "message", files }) => {
+  const message = messagesModel.createMessage({
     delta,
     type,
     team: teamId,
     user: userId,
     files,
   });
-  await channelMessagesModel.createChanelMessage(channelId, message.id);
+  channelMessagesModel.addMessageId(channelId, message.id);
 
-  await updateChannelModify({ id: channelId, latestModify: message.created });
-  const { unreadMessageCount } = await increateChannelUnreadMessageCount({
+  updateChannelModify({ id: channelId, latestModify: message.created });
+  const { unreadMessageCount } = increateChannelUnreadMessageCount({
     id: channelId,
     ignoreUsers: [userId],
   });
   return { message, unreadMessageCount };
 };
 
-export const edit = async ({ messageId, delta }) => {
-  return await messagesModel.updateMessage({ id: messageId, delta });
+export const edit = (id, { delta }) => {
+  return messagesModel.updateMessage(id, { delta });
 };
 
-export const editFileStatus = async ({ messageId, fileId, status }) => {
-  return await messagesModel.updateMessageFile({ id: messageId, fileId, status });
+export const editFileStatus = (id, { fileId, status }) => {
+  return messagesModel.updateMessageFile(id, { fileId, status });
 };
 
-export const editFileUrl = async ({ messageId, fileId, url }) => {
-  return await messagesModel.updateMessageFile({ id: messageId, fileId, url });
+export const editFileUrl = (id, { fileId, url }) => {
+  return messagesModel.updateMessageFile(id, { fileId, url });
 };
 
-export const editFileThumbnail = async ({ messageId, fileId, thumb }) => {
-  return await messagesModel.updateMessageFile({ id: messageId, fileId, thumb });
+export const editFileThumbnail = (id, { fileId, thumb }) => {
+  return messagesModel.updateMessageFile(id, { fileId, thumb });
 };
 
-export const editFileThumbList = async ({ messageId, fileId, thumbList }) => {
-  const message = await messagesModel.getMessage(messageId);
+export const editFileThumbList = (id, { fileId, thumbList }) => {
+  const message = messagesModel.getMessage(id);
   const file = message.files.find((f) => f.id === fileId);
-  return await messagesModel.updateMessageFile({
-    id: messageId,
+  return messagesModel.updateMessageFile({
+    id,
     fileId,
     thumbList: [...file.thumbList, ...thumbList],
   });
 };
 
-export const remove = async (channelId, messageId) => {
-  const message = await messagesModel.getMessage(messageId);
+export const remove = (channelId, messageId) => {
+  const message = messagesModel.getMessage(messageId);
   const files = message.files;
   files.forEach((file) => deleteFile(file));
-  await channelMessagesModel.removeChanelMessage(channelId, messageId);
-  return await messagesModel.removeMessage(messageId);
+  channelMessagesModel.remmoveMessageId(channelId, messageId);
+  return messagesModel.removeMessage(messageId);
 };
 
-export const removeFile = async (messageId, fileId) => {
-  const { message, file } = await messagesModel.removeMessageFile(messageId, fileId);
+export const removeFile = (messageId, fileId) => {
+  const { message, file } = messagesModel.removeMessageFile(messageId, fileId);
   if (file) deleteFile(file);
 
   return message;
 };
 
-export const removeAllFiles = async (messageId) => {
-  const { message } = await messagesModel.removeAllMessageFiles(messageId);
-  return message;
+export const star = (id) => {
+  return messagesModel.starMessage(id);
 };
 
-export const star = async (messageId) => {
-  return await messagesModel.starMessage(messageId);
-};
-
-export const reaction = async (userId, messageId, reactionId) => {
-  return await messagesModel.reactionMessage(userId, messageId, reactionId);
+export const reaction = (id, { userId, reactionId }) => {
+  return messagesModel.reactionMessage(id, { userId, reactionId });
 };

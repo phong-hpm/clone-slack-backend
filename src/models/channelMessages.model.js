@@ -1,34 +1,19 @@
-import { getTable, writeData } from "../database/index.js";
+import { channelMessagesTable } from "#database/apis/index.js";
 
-export const getChanelMessages = async (channelId) => {
-  try {
-    const channelMessages = await getTable("channel_messages");
-    return channelMessages[channelId] || [];
-  } catch {
-    return null;
-  }
+export const getChanelMessages = (channelId) => {
+  return channelMessagesTable.readById(channelId);
 };
 
-export const createChanelMessage = async (channelId, messageId) => {
-  try {
-    const channelMessages = await getTable("channel_messages");
-    if (!channelMessages[channelId]) channelMessages[channelId] = [];
-    channelMessages[channelId].push(messageId);
-    await writeData();
-    return messageId;
-  } catch (e) {
-    return null;
-  }
+export const addMessageId = (channelId, messageId) => {
+  return channelMessagesTable.update(channelId, [messageId]);
 };
 
-export const removeChanelMessage = async (channelId, messageId) => {
-  try {
-    const channelMessages = await getTable("channel_messages");
-    if (!channelMessages[channelId]) return null;
-    channelMessages[channelId] = channelMessages[channelId].filter((mesId) => mesId !== messageId);
-    await writeData();
-    return messageId;
-  } catch (e) {
-    return null;
-  }
+export const remmoveMessageId = (channelId, messageId) => {
+  const channelMessage = channelMessagesTable.readById(channelId);
+  const data = channelMessage.filter((id) => id !== messageId);
+
+  // delete old data first
+  channelMessagesTable.remove(channelId);
+  // insert new data back
+  return channelMessagesTable.insert(channelId, data);
 };

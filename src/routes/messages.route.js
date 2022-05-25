@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import * as messagesController from "../controllers/messages.controller.js";
+import * as messagesController from "#controllers/messages.controller.js";
 
 const router = new Router({ mergeParams: true });
 

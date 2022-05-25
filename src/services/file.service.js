@@ -88,7 +88,7 @@ const deleteFileByUrl = (url) => {
   }
 };
 
-export const deleteFile = async (file) => {
+export const deleteFile = (file) => {
   deleteFileByUrl(file.url);
   deleteFileByUrl(file.thumb);
   file.thumbList.forEach((url) => deleteFileByUrl(url));

@@ -1,0 +1,144 @@
+{
+  "D-B80B9B6F-1FEA-404A-B094-DFB815750D8E": {
+    "id": "D-B80B9B6F-1FEA-404A-B094-DFB815750D8E",
+    "type": "direct_message",
+    "users": [
+      "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+      "U-1B10D300-7136-481E-BCC1-5EF49C37FA31"
+    ],
+    "unreadMessageCount": {
+      "U-B2C9CAAB-9784-452A-85A0-9E927B779A87": 0,
+      "U-1B10D300-7136-481E-BCC1-5EF49C37FA31": 0
+    },
+    "created": 1650353609201,
+    "latestModify": 1653243351386
+  },
+  "D-42B10AED-953A-4D49-AEC4-573D168BEB7E": {
+    "id": "D-42B10AED-953A-4D49-AEC4-573D168BEB7E",
+    "type": "direct_message",
+    "users": [
+      "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+      "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E"
+    ],
+    "unreadMessageCount": {
+      "U-B2C9CAAB-9784-452A-85A0-9E927B779A87": 0,
+      "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E": 0
+    },
+    "created": 1650353609201,
+    "latestModify": 1650353609201
+  },
+  "D-C0D35670-9F3C-4F0F-B2D6-3D2BC6A8FFF4": {
+    "id": "D-C0D35670-9F3C-4F0F-B2D6-3D2BC6A8FFF4",
+    "type": "direct_message",
+    "users": [
+      "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E",
+      "U-1B10D300-7136-481E-BCC1-5EF49C37FA31"
+    ],
+    "unreadMessageCount": {
+      "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E": 0,
+      "U-1B10D300-7136-481E-BCC1-5EF49C37FA31": 0
+    },
+    "created": 1650353609201,
+    "latestModify": 1650353609201
+  },
+  "C-F9E04C06-DF6A-4495-B965-AF2D7A15547A": {
+    "id": "C-F9E04C06-DF6A-4495-B965-AF2D7A15547A",
+    "type": "channel",
+    "name": "general",
+    "users": [
+      "U-1B10D300-7136-481E-BCC1-5EF49C37FA31",
+      "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+      "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E"
+    ],
+    "unreadMessageCount": {
+      "U-B2C9CAAB-9784-452A-85A0-9E927B779A87": 0,
+      "U-1B10D300-7136-481E-BCC1-5EF49C37FA31": 0,
+      "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E": 1
+    },
+    "creator": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "created": 1652258957684,
+    "latestModify": 1653335740720
+  },
+  "C-98EC88EE-56AC-4C5F-8D5F-A5B171D2CDE1": {
+    "id": "C-98EC88EE-56AC-4C5F-8D5F-A5B171D2CDE1",
+    "type": "channel",
+    "name": "random",
+    "users": [
+      "U-1B10D300-7136-481E-BCC1-5EF49C37FA31",
+      "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+      "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E"
+    ],
+    "unreadMessageCount": {
+      "U-B2C9CAAB-9784-452A-85A0-9E927B779A87": 0,
+      "U-1B10D300-7136-481E-BCC1-5EF49C37FA31": 0,
+      "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E": 0
+    },
+    "creator": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "created": 1650353609201,
+    "latestModify": 1650353609201
+  },
+  "C-15A97A61-F619-416F-863F-B42F178FA299": {
+    "id": "C-15A97A61-F619-416F-863F-B42F178FA299",
+    "type": "channel",
+    "name": "Channel 1",
+    "users": [
+      "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+      "U-1B10D300-7136-481E-BCC1-5EF49C37FA31",
+      "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E"
+    ],
+    "unreadMessageCount": {
+      "U-B2C9CAAB-9784-452A-85A0-9E927B779A87": 0,
+      "U-1B10D300-7136-481E-BCC1-5EF49C37FA31": 1,
+      "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E": 2
+    },
+    "creator": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "created": 1650353609205,
+    "latestModify": 1653465673879
+  },
+  "C-563B1E15-E612-4D52-8735-3B808A9525A8": {
+    "id": "C-563B1E15-E612-4D52-8735-3B808A9525A8",
+    "type": "channel",
+    "name": "Channel 2",
+    "users": [
+      "U-1B10D300-7136-481E-BCC1-5EF49C37FA31",
+      "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+      "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E"
+    ],
+    "unreadMessageCount": {
+      "U-1B10D300-7136-481E-BCC1-5EF49C37FA31": 0,
+      "U-B2C9CAAB-9784-452A-85A0-9E927B779A87": 0,
+      "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E": 0
+    },
+    "creator": "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E",
+    "created": 1650353609206,
+    "latestModify": 1650353609206
+  },
+  "C-0BA889E3-B586-4EC1-A141-409C514B27E4": {
+    "id": "C-0BA889E3-B586-4EC1-A141-409C514B27E4",
+    "type": "channel",
+    "name": "general",
+    "users": [
+      "U-B2C9CAAB-9784-452A-85A0-9E927B779A87"
+    ],
+    "unreadMessageCount": {
+      "U-B2C9CAAB-9784-452A-85A0-9E927B779A87": 0
+    },
+    "creator": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "created": 1650353609200,
+    "latestModify": 1650353609200
+  },
+  "C-37D2EDF3-1F41-401B-AD8D-22DD0F9CE17D": {
+    "id": "C-37D2EDF3-1F41-401B-AD8D-22DD0F9CE17D",
+    "type": "channel",
+    "name": "random",
+    "users": [
+      "U-B2C9CAAB-9784-452A-85A0-9E927B779A87"
+    ],
+    "unreadMessageCount": {
+      "U-B2C9CAAB-9784-452A-85A0-9E927B779A87": 0
+    },
+    "creator": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "created": 1650353609201,
+    "latestModify": 1650353609201
+  }
+}

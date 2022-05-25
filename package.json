@@ -5,7 +5,6 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "server": "ACCESS_TOKEN_SECRET=secret ACCESS_TOKEN_LIFE=3600000 REFRESH_TOKEN_LIFE=604800000 DELAY_API=1000 babel-node ./src",
     "dev": "NODE_ENV=development nodemon --exec npm run server"
   },
@@ -23,6 +22,7 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "lowdb": "^3.0.0",
+    "module-alias": "^2.2.2",
     "nodemon": "^2.0.15",
     "rand-token": "^1.0.1",
     "socket.io": "^4.4.1",
@@ -34,6 +34,19 @@
     "@babel/core": "^7.17.8",
     "@babel/node": "^7.16.8",
     "@babel/preset-env": "^7.16.11",
+    "babel-plugin-module-resolver": "^4.1.0",
     "eslint": "^8.13.0"
+  },
+  "imports": {
+    "#_files/*": "./src/_files/*",
+    "#controllers/*": "./src/controllers/*",
+    "#database/*": "./src/database/*",
+    "#methods/*": "./src/methods/*",
+    "#middlewares/*": "./src/middlewares/*",
+    "#models/*": "./src/models/*",
+    "#routes/*": "./src/routes/*",
+    "#services/*": "./src/services/*",
+    "#socket/*": "./src/socket/*",
+    "#utils/*": "./src/utils/*"
   }
 }

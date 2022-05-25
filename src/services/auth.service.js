@@ -1,10 +1,10 @@
 import bcrypt from "bcrypt";
 
-import * as authMethods from "../methods/auth.method.js";
+import * as authMethods from "#methods/auth.method.js";
 
 import * as teamsServices from "./teams.service.js";
 
-import * as userModel from "../models/user.model.js";
+import * as userModel from "#models/user.model.js";
 
 export const getById = async (id) => {
   return await userModel.getUserById(id);
@@ -14,13 +14,14 @@ export const getByEmail = async (email) => {
   return await userModel.getUserByEmail(email);
 };
 
-export const register = async ({ name, email, password }) => {
+export const register = async ({ name, realname, email, password }) => {
   const existedUser = await getByEmail(email);
   if (existedUser) return { error: "email already exists" };
 
   const hashPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
   const { userView, refreshToken } = await userModel.createUser({
     name,
+    realname,
     email,
     password: hashPassword,
   });

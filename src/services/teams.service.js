@@ -1,9 +1,9 @@
 import * as channelsServices from "./channels.service.js";
 import * as authServices from "./auth.service.js";
-import * as teamsModel from "../models/teams.model.js";
+import { getTeamById } from "#models/teams.model.js";
 
 export const getTeamView = async (id, userId, options) => {
-  const team = await teamsModel.getTeam(id);
+  const team = getTeamById(id);
 
   if (team && options.isDeep) {
     if (options.channels && options.channels.isDeep) {
@@ -14,6 +14,7 @@ export const getTeamView = async (id, userId, options) => {
           userId,
           options.channels
         );
+        // when logged user is not in this channel
         if (channelView) channels.push(channelView);
       }
 

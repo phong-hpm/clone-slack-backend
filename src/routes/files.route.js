@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import * as filesController from "../controllers/files.controller.js";
+import * as filesController from "#controllers/files.controller.js";
 
 const router = new Router({ mergeParams: true });
 

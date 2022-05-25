@@ -1,0 +1,26 @@
+{
+  "U-B2C9CAAB-9784-452A-85A0-9E927B779A87": {
+    "id": "U-B2C9CAAB-9784-452A-85A0-9E927B779A87",
+    "name": "Phong Ho",
+    "realname": "Phong Hồ",
+    "email": "phonghophamminh@gmail.com",
+    "timeZone": "",
+    "teams": ["T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB", "T-23A0D72B-76E5-430D-B528-329048987FF5"]
+  },
+  "U-1B10D300-7136-481E-BCC1-5EF49C37FA31": {
+    "id": "U-1B10D300-7136-481E-BCC1-5EF49C37FA31",
+    "name": "Alex",
+    "realname": "Alexander Carlson",
+    "email": "alexandercarlson@gmail.com",
+    "timeZone": "",
+    "teams": ["T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"]
+  },
+  "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E": {
+    "id": "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E",
+    "name": "Michael Schneider",
+    "realname": "Michael Schneider",
+    "email": "michaelschneider@gmail.com",
+    "timeZone": "",
+    "teams": ["T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"]
+  }
+}

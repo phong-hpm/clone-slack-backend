@@ -1,5 +1,5 @@
-import * as channelsModel from "../models/channels.model.js";
-import * as channelMessagesModel from "../models/channelMessages.model.js";
+import * as channelsModel from "#models/channels.model.js";
+import * as channelMessagesModel from "#models/channelMessages.model.js";
 
 import * as authServices from "./auth.service.js";
 import * as messagesServices from "./messages.service.js";
@@ -22,8 +22,11 @@ export const getChanelHistory = async (id) => {
   return await getChanelMessages(messageIds);
 };
 
-export const getChanelView = async (id, userId, options = {}) => {
+export const getChanelView = async (id, userId) => {
   const channel = await channelsModel.getChanel(id);
+
+  // logged user is not in this channel
+  if (!channel.users.includes(userId)) return null;
 
   channel.unreadMessageCount = channel.unreadMessageCount[userId] || 0;
 
@@ -39,29 +42,15 @@ export const getChanelView = async (id, userId, options = {}) => {
     }
   }
 
-  if (channel && options.isDeep) {
-    if (options.messages) {
-      if (options.messages.isDeep) {
-        channel.messages = await getChanelHistory(channel.id, options.messages);
-      }
-    }
-
-    if (options.users && options.users.isDeep) {
-      const users = [];
-      for (let i = 0; i < channel.users.length; i++) {
-        const user = await authServices.getUserView(channel.users[i], options.users);
-        if (user) users.push(user);
-      }
-
-      channel.users = users;
-    }
-  }
-
   return channel;
 };
 
+export const addChannel = ({ teamId, userId, name, desc }) => {
+  return channelsModel.createChannel({ teamId, userId, name, desc });
+};
+
 export const updateChannelModify = ({ id, latestModify }) => {
-  return channelsModel.updateChanel({ id, latestModify });
+  return channelsModel.updateChannel(id, { latestModify });
 };
 
 export const increateChannelUnreadMessageCount = ({ id, ignoreUsers }) => {
