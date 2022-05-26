@@ -25,8 +25,6 @@ export const createChannel = async ({ teamId, userId, name, desc = "" }) => {
     users: team.users,
     unreadMessageCount,
     creator: userId,
-    created: Date.now(),
-    latestModify: 0,
   });
 
   // add [channelId] to [team.channels]
@@ -52,7 +50,11 @@ export const increateUnread = async ({ id, ignoreUsers = [] }) => {
     unreadMessageCount[id]++;
   }
 
-  const updatedChannel = await channelsTable.update(id, { unreadMessageCount });
+  const updatedChannel = await channelsTable.update(id, {
+    unreadMessageCount,
+    // don't update updatedTime when increate Unread time
+    updatedTime: channel.updatedTime,
+  });
   return {
     channel: updatedChannel,
     unreadMessageCount: updatedChannel.unreadMessageCount,
@@ -70,7 +72,11 @@ export const clearUnread = async ({ id, users = [] }) => {
     unreadMessageCount[userId] = 0;
   });
 
-  const updatedChannel = await channelsTable.update(id, { unreadMessageCount });
+  const updatedChannel = await channelsTable.update(id, {
+    unreadMessageCount,
+    // don't update updatedTime when clear Unread time
+    updatedTime: channel.updatedTime,
+  });
   return {
     channel: updatedChannel,
     unreadMessageCount: updatedChannel.unreadMessageCount,

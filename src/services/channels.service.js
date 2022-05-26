@@ -21,7 +21,7 @@ export const getChannelHistory = async (id) => {
   const messageIds = await channelMessagesModel.getChannelMessages(id);
   const channel = await channelsModel.getChannelById(id);
   const messages = await getChannelMessages(messageIds);
-  return { messages, latestModify: channel.latestModify };
+  return { messages, updatedTime: channel.updatedTime };
 };
 
 export const getChannelView = async (id, userId) => {
@@ -51,8 +51,8 @@ export const addChannel = async ({ teamId, userId, name, desc }) => {
   return channelsModel.createChannel({ teamId, userId, name, desc });
 };
 
-export const updateChannelModify = async (id, { latestModify }) => {
-  return channelsModel.updateChannel(id, { latestModify });
+export const updateChannelModify = async (id, { updatedTime }) => {
+  return channelsModel.updateChannel(id, { updatedTime });
 };
 
 export const increateChannelUnreadMessageCount = async ({ id, ignoreUsers }) => {

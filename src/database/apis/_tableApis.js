@@ -14,6 +14,10 @@ export const tableApis = (tableName) => {
     return db.data;
   };
 
+  const write = async () => {
+    await db.write();
+  };
+
   const readById = async (id) => {
     const table = await read();
     const data = table[id];
@@ -31,8 +35,17 @@ export const tableApis = (tableName) => {
     if (!id) throw new Error(`[insert] to [${tableName}] failled, [id] is '${id}'`);
     if (await validate(id)) throw new Error(`[insert] - [${tableName}] failled, '${id}' existed`);
 
+    const now = Date.now();
     const table = await read();
-    table[id] = data;
+    if (Array.isArray(data)) {
+      table[id] = data;
+    } else {
+      table[id] = {
+        ...data,
+        createdTime: data.createdTime || now,
+        updatedTime: data.updatedTime || now,
+      };
+    }
     await db.write();
     return readById(id);
   };
@@ -42,9 +55,13 @@ export const tableApis = (tableName) => {
     if (!(await validate(id)))
       throw new Error(`[update] - [${tableName}] failled, '${id}' not existed`);
 
+    const now = Date.now();
     const table = await read();
-    if (Array.isArray(data)) table[id] = [...(table[id] || []), ...data];
-    else table[id] = { ...(table[id] || {}), ...data };
+    if (Array.isArray(data)) {
+      table[id] = [...(table[id] || []), ...data];
+    } else {
+      table[id] = { ...(table[id] || {}), ...data, updatedTime: data.updatedTime || now };
+    }
     await db.write();
     return readById(id);
   };
@@ -60,6 +77,7 @@ export const tableApis = (tableName) => {
 
   return {
     read,
+    write,
     readById,
     validate,
     insert,

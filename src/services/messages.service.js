@@ -29,7 +29,7 @@ export const add = async ({
   await channelMessagesModel.addMessageId(channelId, message.id);
 
   // update modify in [channels]
-  const channel = await updateChannelModify(channelId, { latestModify: message.created });
+  const channel = await updateChannelModify(channelId, { updatedTime: message.updatedTime });
 
   // update unread message in [channels]
   const { unreadMessageCount } = await increateChannelUnreadMessageCount({
@@ -39,11 +39,53 @@ export const add = async ({
   return { message, unreadMessageCount, channel };
 };
 
-export const edit = async (id, { channelId, delta }) => {
-  const message = await messagesModel.updateMessage(id, { delta });
+export const editDelta = async (id, { channelId, delta }) => {
+  const message = await messagesModel.updateDelta(id, { delta });
+  // update modify in [channels]
+  const channel = await updateChannelModify(channelId, { updatedTime: message.updatedTime });
+
+  return { message, channel };
+};
+
+export const editStar = async (id, { channelId }) => {
+  const message = await messagesModel.updateStar(id);
+  // update modify in [channels]
+  const channel = await updateChannelModify(channelId, { updatedTime: message.updatedTime });
+  return { message, channel };
+};
+
+export const editReaction = async (id, { channelId, userId, reactionId }) => {
+  const message = await messagesModel.updateReaction(id, { userId, reactionId });
+  // update modify in [channels]
+  const channel = await updateChannelModify(channelId, { updatedTime: message.updatedTime });
+  return { message, channel };
+};
+
+export const remove = async (id, { channelId }) => {
+  const message = await messagesModel.getMessage(id);
+  const files = message.files || [];
+
+  // delete files
+  files.forEach((file) => deleteFile(file));
+
+  // add messageId to [channel_messages]
+  await channelMessagesModel.remmoveMessageId(channelId, id);
 
   // update modify in [channels]
-  const channel = await updateChannelModify(channelId, { latestModify: message.updated });
+  const channel = await updateChannelModify(channelId, { updatedTime: Date.now() });
+
+  // remove message from [messages]
+  await messagesModel.removeMessage(id);
+
+  return { messageId: id, channel };
+};
+
+export const removeFile = async (id, { channelId, fileId }) => {
+  const { message, file } = await messagesModel.removeMessageFile(id, fileId);
+  if (file) deleteFile(file);
+
+  // update modify in [channels]
+  const channel = await updateChannelModify(channelId, { updatedTime: message.updatedTime });
 
   return { message, channel };
 };
@@ -70,38 +112,4 @@ export const editFileThumbList = async (id, { fileId, thumbList }) => {
     fileId,
     thumbList: [...file.thumbList, ...thumbList],
   });
-};
-
-export const remove = async (channelId, messageId) => {
-  const message = await messagesModel.getMessage(messageId);
-  const files = message.files;
-
-  // delete files
-  files.forEach((file) => deleteFile(file));
-
-  // add messageId to [channel_messages]
-  await channelMessagesModel.remmoveMessageId(channelId, messageId);
-
-  // update modify in [channels]
-  const channel = await updateChannelModify(channelId, { latestModify: message.updated });
-
-  // remove message from [messages]
-  await messagesModel.removeMessage(messageId);
-
-  return { messageId, channel };
-};
-
-export const removeFile = async (messageId, fileId) => {
-  const { message, file } = await messagesModel.removeMessageFile(messageId, fileId);
-  if (file) deleteFile(file);
-
-  return message;
-};
-
-export const star = async (id) => {
-  return messagesModel.starMessage(id);
-};
-
-export const reaction = async (id, { userId, reactionId }) => {
-  return messagesModel.reactionMessage(id, { userId, reactionId });
 };

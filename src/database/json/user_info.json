@@ -5,8 +5,13 @@
     "realname": "Phong Hồ",
     "email": "phonghophamminh@gmail.com",
     "timeZone": "",
-    "teams": ["T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB", "T-23A0D72B-76E5-430D-B528-329048987FF5"],
-    "avatar": "http://localhost:8000/files/avatar/U-B2C9CAAB-9784-452A-85A0-9E927B779A87.jpeg"
+    "teams": [
+      "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB",
+      "T-23A0D72B-76E5-430D-B528-329048987FF5"
+    ],
+    "avatar": "http://localhost:8000/files/avatar/U-B2C9CAAB-9784-452A-85A0-9E927B779A87.jpeg",
+    "createdTime": 1653589513216,
+    "updatedTime": 1653589513216
   },
   "U-1B10D300-7136-481E-BCC1-5EF49C37FA31": {
     "id": "U-1B10D300-7136-481E-BCC1-5EF49C37FA31",
@@ -14,8 +19,12 @@
     "realname": "Alexander Carlson",
     "email": "alexandercarlson@gmail.com",
     "timeZone": "",
-    "teams": ["T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"],
-    "avatar": "http://localhost:8000/files/avatar/U-1B10D300-7136-481E-BCC1-5EF49C37FA31.jpeg"
+    "teams": [
+      "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+    ],
+    "avatar": "http://localhost:8000/files/avatar/U-1B10D300-7136-481E-BCC1-5EF49C37FA31.jpeg",
+    "createdTime": 1653589513232,
+    "updatedTime": 1653589513232
   },
   "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E": {
     "id": "U-A7CE528A-25F3-415E-A763-34B6D5D4AB7E",
@@ -23,6 +32,10 @@
     "realname": "Michael Schneider",
     "email": "michaelschneider@gmail.com",
     "timeZone": "",
-    "teams": ["T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"]
+    "teams": [
+      "T-56BD30D1-CA5B-43BD-A799-1F2DC77F27BB"
+    ],
+    "createdTime": 1653589513242,
+    "updatedTime": 1653589513242
   }
 }
