@@ -1,11 +1,6 @@
 import { Low, JSONFile } from "lowdb";
 import { join } from "path";
 
-const getDB = <DataType>(file: string) => {
-  const jsonPath = `${process.cwd()}/src/database/json`;
-  return new Low<Record<string, DataType>>(new JSONFile(join(jsonPath, file)));
-};
-
 export const tableApis = <DataType>(tableName: string) => {
   const jsonPath = `${process.cwd()}/src/database/json`;
   const db = new Low<Record<string, DataType>>(new JSONFile(join(jsonPath, `${tableName}.json`)));

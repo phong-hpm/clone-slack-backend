@@ -20,6 +20,13 @@ export interface UserInfoType {
   updatedTime: number;
 }
 
+export interface UserEmailVerifyingType {
+  id: string;
+  email: string;
+  verifyCode: string;
+  createdTime: number;
+}
+
 export interface TeamType {
   id: string;
   name: string;
@@ -41,6 +48,7 @@ export interface ChannelType {
   createdTime: number;
   updatedTime: number;
   partner?: UserInfoViewType;
+  avatar?: string;
 }
 
 export interface MessageType {

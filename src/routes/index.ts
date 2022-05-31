@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import authRoutes from "@routes/auth.route";
+import authRoutes from "@routes/user.route";
 import messagesRoutes from "@routes/messages.route";
 import filesRoutes from "@routes/files.route";
 

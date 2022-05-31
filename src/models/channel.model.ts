@@ -12,7 +12,7 @@ const find = async (searchObj: Partial<ChannelType>) => {
 };
 
 const create = async (data: Partial<ChannelType> & { userId?: string; teamId: string }) => {
-  const { teamId, type, userId, name, desc = "", users } = data;
+  const { teamId, type, userId, name, desc = "", users, avatar } = data;
   if (!userId || (!name && type !== "group_message")) return null;
   const team = await teamsTable.readById(teamId);
 
@@ -32,6 +32,7 @@ const create = async (data: Partial<ChannelType> & { userId?: string; teamId: st
     unreadMessageCount,
     creator: userId,
     team: teamId,
+    avatar,
   });
 
   // add [channelId] to [team.channels]

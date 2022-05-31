@@ -63,12 +63,11 @@ const getView = async (id: string, userId: string) => {
 };
 
 const add = async (data: Partial<ChannelType> & { userId?: string; teamId: string }) => {
-  const { teamId, type, userId, name, desc, users } = data;
-  return channelModel.create({ teamId, type, userId, name, desc, users });
+  return channelModel.create(data);
 };
 
-const updateUpdatedTime = async (id: string, { updatedTime }: { updatedTime: number }) => {
-  return channelModel.update(id, { updatedTime });
+const updateUpdatedTime = async (id: string, data: { updatedTime: number }) => {
+  return channelModel.update(id, data);
 };
 
 const increateUnread = async (id: string, ignoreUsers?: string[]) => {

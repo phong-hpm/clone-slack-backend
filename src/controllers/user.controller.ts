@@ -2,6 +2,7 @@ import userService from "@services/user.service";
 import authMethod from "@methods/auth.method";
 
 import { RequestHandlerCustom } from "src/types";
+import { validateEmail } from "@utils/email";
 
 const getUserInfo: RequestHandlerCustom = async (req, res) => {
   try {
@@ -45,6 +46,17 @@ const login: RequestHandlerCustom = async (req, res) => {
   }
 };
 
+const checkEmail: RequestHandlerCustom = async (req, res) => {
+  try {
+    const { email } = req.body.postData || {};
+    if (!validateEmail(email)) res.status(401).send("email format is not valid");
+    const userEmailVerifying = await userService.sendVerifyCodeEmail(email);
+    res.send({ status: "sending", verifyId: userEmailVerifying.id });
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 const refreshToken: RequestHandlerCustom = async (req, res) => {
   try {
     const { refreshToken } = req.body.postData || {};
@@ -72,6 +84,6 @@ const refreshToken: RequestHandlerCustom = async (req, res) => {
   }
 };
 
-const userController = { getUserInfo, register, login, refreshToken };
+const userController = { getUserInfo, register, login, checkEmail, refreshToken };
 
 export default userController;

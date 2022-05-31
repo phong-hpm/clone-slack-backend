@@ -1,4 +1,6 @@
 import bcrypt from "bcrypt";
+import { OAuth2Client } from "google-auth-library";
+import nodemailer from "nodemailer";
 
 import authMethod from "@methods/auth.method";
 import userModel from "@models/user.model";
@@ -6,6 +8,9 @@ import teamsService from "@services/team.service";
 
 import { TeamType } from "@database/apis/types";
 import { UserInfoViewType } from "@services/types";
+
+import { getEmailTemplate } from "@utils/email";
+import userEmailVerifyingModel from "@models/userEmailVerifying";
 
 const getById = async (id: string) => {
   return await userModel.getById(id);
@@ -67,6 +72,55 @@ const login = async ({ email, password }: { email: string; password: string }) =
   return { data };
 };
 
+// this service haven't finish yet
+const verifyGoogleIdToken = async (idToken: string) => {
+  const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+  client.verifyIdToken;
+
+  const ticket = await client.verifyIdToken({
+    idToken,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+  const payload = ticket.getPayload();
+  console.log("payload", payload);
+};
+
+const sendVerifyCodeEmail = async (email: string) => {
+  const verifyNumber = Math.floor(Math.random() * 1000000);
+  const verifyString = `${String(verifyNumber).slice(0, 3)}-${String(verifyNumber).slice(3)}`;
+
+  let userEmailVerifying = await userEmailVerifyingModel.find({ email });
+
+  if (userEmailVerifying) {
+    await userEmailVerifyingModel.remove(userEmailVerifying.id);
+  }
+
+  const emailTransporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: { user: process.env.SENDER_EMAIL, pass: process.env.SENDER_PASSWORD },
+  });
+
+  userEmailVerifying = await userEmailVerifyingModel.insert({
+    email,
+    verifyCode: String(verifyNumber),
+  });
+
+  const mailOptions = {
+    from: "Slack Clone <slackclonesup@gmail.com>",
+    to: email,
+    subject: `Slack confirmation code: ${verifyString}`,
+    html: getEmailTemplate(verifyString),
+  };
+
+  // don't wait for [sendMail]
+  emailTransporter.sendMail(mailOptions);
+
+  return userEmailVerifying;
+};
+
 const getUserView = async (id: string) => {
   const userView = await userModel.getUserInfo(id);
 
@@ -86,6 +140,7 @@ const getUserInfo = async (id: string) => {
 };
 
 const userService = {
+  sendVerifyCodeEmail,
   getByEmail,
   getUserInfosByIdList,
   getById,
@@ -93,6 +148,7 @@ const userService = {
   login,
   getUserInfo,
   getUserView,
+  verifyGoogleIdToken,
 };
 
 export default userService;

@@ -214,6 +214,7 @@ const channelSocketHandler = () => {
 
           // build channelName
           const toUsers = await userService.getUserInfosByIdList(toUserIds.sort());
+          const channelAvatar = toUsers[Object.keys(toUsers)[0]]?.avatar;
           const channelNameList = [];
           for (const user of Object.values(toUsers)) channelNameList.push(user.name);
           const channelName = channelNameList.join(", ");
@@ -228,6 +229,7 @@ const channelSocketHandler = () => {
               userId: socket.userId,
               users: toUserIds,
               name: channelName,
+              avatar: channelAvatar,
             });
             const channelView = await channelService.getView(channel.id, socket.userId);
 
