@@ -2,28 +2,32 @@
   "name": "chat-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "type": "module",
+  "main": "index.ts",
   "scripts": {
-    "server": "ACCESS_TOKEN_SECRET=secret ACCESS_TOKEN_LIFE=3600000 REFRESH_TOKEN_LIFE=604800000 DELAY_API=1000 babel-node ./src",
-    "dev": "NODE_ENV=development nodemon --exec npm run server"
+    "server": "ts-node -r tsconfig-paths/register ./src/index.ts",
+    "start": "tsnd --respawn -r tsconfig-paths/register ./src/index.ts",
+    "lint": "eslint src/**/*.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@babel/preset-typescript": "^7.17.12",
+    "@types/bcrypt": "^5.0.0",
+    "@types/jsonwebtoken": "^8.5.8",
+    "@types/lowdb": "^1.0.11",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.20.0",
     "cookie": "^0.5.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
     "express": "^4.17.3",
     "express-fileupload": "^1.3.1",
     "express-jwt": "^6.1.1",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
-    "lowdb": "^3.0.0",
+    "lowdb": "github:dankreiger/lowdb#chore/esm-cjs-hybrid-WITH-LIB",
     "module-alias": "^2.2.2",
-    "nodemon": "^2.0.15",
     "rand-token": "^1.0.1",
     "socket.io": "^4.4.1",
     "socket.io-cookie-parser": "^1.0.0",
@@ -34,19 +38,26 @@
     "@babel/core": "^7.17.8",
     "@babel/node": "^7.16.8",
     "@babel/preset-env": "^7.16.11",
+    "@tsconfig/node16": "^1.0.2",
+    "@types/cookie-parser": "^1.4.3",
+    "@types/express": "^4.17.13",
+    "@types/express-fileupload": "^1.2.2",
+    "@types/node": "^17.0.36",
+    "@types/uuid": "^8.3.4",
+    "@typescript-eslint/eslint-plugin": "^5.27.0",
+    "@typescript-eslint/parser": "^5.27.0",
     "babel-plugin-module-resolver": "^4.1.0",
-    "eslint": "^8.13.0"
+    "eslint": "^8.13.0",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.8.0",
+    "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.0.0",
+    "typescript": "^4.7.2"
   },
-  "imports": {
-    "#_files/*": "./src/_files/*",
-    "#controllers/*": "./src/controllers/*",
-    "#database/*": "./src/database/*",
-    "#methods/*": "./src/methods/*",
-    "#middlewares/*": "./src/middlewares/*",
-    "#models/*": "./src/models/*",
-    "#routes/*": "./src/routes/*",
-    "#services/*": "./src/services/*",
-    "#socket/*": "./src/socket/*",
-    "#utils/*": "./src/utils/*"
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   }
 }

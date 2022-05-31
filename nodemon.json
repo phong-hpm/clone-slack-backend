@@ -1,6 +1,7 @@
 {
-  "exec": "npm run dev",
+  "exec": "ts-node ./src/index.ts",
+  "execMap": { "ts": "ts-node" },
   "watch": ["src/*", "public/*"],
-  "ext": "js, html, css, json",
+  "ext": "js, ts, json",
   "ignore": ["src/database/json/*"]
 }
