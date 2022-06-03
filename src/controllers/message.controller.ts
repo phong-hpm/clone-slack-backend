@@ -94,8 +94,8 @@ const uploadMessageWithFiles: RequestHandlerCustom = async (req, res) => {
 
     errorMessage = validateFiles(req);
 
-    if (errorMessage) return res.status(400).send({ error: errorMessage });
-    else res.send({ status: "uploading" });
+    if (errorMessage) return res.send({ error: errorMessage });
+    else res.send({ ok: true, status: "uploading" });
 
     const mappedFileList = files.map((file) => {
       const thumbList = fileThumbList.filter((f) => f.name === file.name);
@@ -174,6 +174,7 @@ const uploadMessageWithFiles: RequestHandlerCustom = async (req, res) => {
       socketSpace.emit(SocketEvent.ON_EDITED_MESSAGE, message);
     }
   } catch (e) {
+    res.send({ error: "upload failed" });
     console.log(e);
   }
 };

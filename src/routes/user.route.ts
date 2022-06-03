@@ -7,8 +7,7 @@ const router = Router({ mergeParams: true });
 
 router.get("/user", authentication, authController.getUserInfo);
 router.post("/refresh-token", authController.refreshToken);
-router.post("/login", authController.login);
 router.post("/check-email", authController.checkEmail);
-router.post("/register", authController.register);
+router.post("/confirm-email-code", authController.confirmEmailCode);
 
 export default router;

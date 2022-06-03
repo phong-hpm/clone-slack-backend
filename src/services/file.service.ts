@@ -1,10 +1,10 @@
 import fs from "fs";
 import { URL } from "url";
 import { Readable } from "stream";
-import { v4 as uuid } from "uuid";
 
 import { InputFileType } from "@services/types";
 import { MessageFileType } from "@database/apis/types";
+import { generateId } from "@utils/generateId";
 
 export const mimeType = {
   VIDEO: "video/webm",
@@ -61,7 +61,7 @@ const upload = async (file: InputFileType) => {
   }
 
   if (typePath) {
-    fileName = `${uuid()}.${getExtensionByType(typePath)}`;
+    fileName = `${generateId()}.${getExtensionByType(typePath)}`;
     const url = `${global.domain}/files/${typePath}/${fileName}`;
     const filePath = `${folderPath}/${typePath}/${fileName}`;
 

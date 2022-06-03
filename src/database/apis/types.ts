@@ -3,7 +3,6 @@ import { UserInfoViewType } from "@services/types";
 export interface UserType {
   id: string;
   email: string;
-  password: string;
   refreshToken: string;
   updatedTime: number;
 }

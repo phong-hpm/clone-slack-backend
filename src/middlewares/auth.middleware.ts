@@ -8,9 +8,9 @@ export const authentication: RequestHandlerCustom = async (req, res, next) => {
   const { error, payload } = await authMethod.verifyToken(token);
   if (error) return res.status(401).send(error);
 
-  const { id, email } = payload;
+  const { id } = payload;
   const user = await userModel.getById(id);
-  const accessToken = await authMethod.generateAccessToken({ id, email });
+  const accessToken = await authMethod.generateAccessToken({ id });
 
   req.user = { ...user, accessToken };
 

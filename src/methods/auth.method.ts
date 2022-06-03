@@ -39,7 +39,7 @@ const verifyToken = async (token: string) => {
     return { payload };
   } catch (error) {
     console.log(`Error in decode access token: ${error}`);
-    return { error: "verification was failed" };
+    return { error: "verify failed" };
   }
 };
 

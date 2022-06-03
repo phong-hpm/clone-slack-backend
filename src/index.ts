@@ -12,6 +12,7 @@ import fileUpload from "express-fileupload";
 
 import routes from "@routes/index";
 import { setupSocket } from "@socket/socket";
+import { setupEmailTransporter } from "@utils/email";
 
 // for development
 (global as any).delay = (time: number) =>
@@ -19,6 +20,9 @@ import { setupSocket } from "@socket/socket";
 
 // config env
 dotEnv.config();
+
+// setup nodemailer
+setupEmailTransporter();
 
 // express server
 const app = express();
@@ -46,8 +50,6 @@ app.use(
 
 // cookies
 app.use(cookieParser("cookie_secret", {}));
-
-const now = new Date();
 
 // delay for testing
 app.use((req, res, next) => {

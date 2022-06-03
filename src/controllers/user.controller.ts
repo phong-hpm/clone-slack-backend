@@ -7,41 +7,9 @@ import { validateEmail } from "@utils/email";
 const getUserInfo: RequestHandlerCustom = async (req, res) => {
   try {
     const user = await userService.getUserView(req.user.id);
-    res.send({ user });
+    res.send({ ok: true, user });
   } catch (e) {
-    console.log(e);
-  }
-};
-
-const register: RequestHandlerCustom = async (req, res) => {
-  try {
-    const { email = "", password = "", name = "", realname = "" } = req.body.postData;
-
-    const { error, data } = await userService.register({ name, realname, email, password });
-    if (error) return res.status(400).send(error);
-
-    const response = {
-      accessToken: (data as any).accessToken,
-      refreshToken: (data as any).refreshToken,
-      user: { ...(data as any).userView, teams: undefined },
-      teams: (data as any).userView.teams,
-    };
-
-    res.send(response);
-  } catch (e) {
-    console.log(e);
-  }
-};
-
-const login: RequestHandlerCustom = async (req, res) => {
-  try {
-    const { email = "", password = "" } = req.body.postData || {};
-
-    const { error, data } = await userService.login({ email, password });
-    if (error) return res.status(401).send(error);
-
-    res.send({ accessToken: (data as any).accessToken, refreshToken: (data as any).refreshToken });
-  } catch (e) {
+    res.send({ error: "user didn't existed" });
     console.log(e);
   }
 };
@@ -49,10 +17,37 @@ const login: RequestHandlerCustom = async (req, res) => {
 const checkEmail: RequestHandlerCustom = async (req, res) => {
   try {
     const { email } = req.body.postData || {};
-    if (!validateEmail(email)) res.status(401).send("email format is not valid");
-    const userEmailVerifying = await userService.sendVerifyCodeEmail(email);
-    res.send({ status: "sending", verifyId: userEmailVerifying.id });
+    if (!validateEmail(email)) return res.send({ error: "invalid email" });
+    const userEmailVerifying = await userService.sendVerifyCode(email);
+    res.send({ ok: true, verifyId: userEmailVerifying.id, email });
   } catch (e) {
+    res.send({ error: "check email failed" });
+    console.log(e);
+  }
+};
+
+const confirmEmailCode: RequestHandlerCustom = async (req, res) => {
+  try {
+    const { email, verifyCode } = req.body.postData || {};
+    const isValid = await userService.confirmVerifyCode({ email, verifyCode });
+    if (!validateEmail(email) || !isValid) {
+      return res.send({ error: "email and verifyCode are in valid" });
+    }
+
+    const existedUser = userService.findUser(email);
+
+    let data: { accessToken?: string; refreshToken?: string; error?: string };
+
+    if (existedUser) {
+      data = await userService.login(email);
+    } else {
+      const name = email.split("@")[0];
+      data = await userService.register({ name, email });
+    }
+
+    res.send({ ok: !data.error, ...data });
+  } catch (e) {
+    res.send({ error: "email and verifyCode are in valid" });
     console.log(e);
   }
 };
@@ -64,26 +59,27 @@ const refreshToken: RequestHandlerCustom = async (req, res) => {
 
     // check refresh token
     const { payload, invalid, expired, error } = await authMethod.verifyToken(refreshToken);
-    if (invalid || expired) return res.status(400).send(error);
+    if (invalid || expired) return res.send({ error });
 
     // get data
-    const { id, email } = payload;
-    const user = await userService.getByEmail(email);
+    const { id } = payload;
+    const user = await userService.getById(id);
 
-    if (!user) return res.status(401).send("Email doesn't exist");
+    if (!user) return res.send({ error: "Email didn't existed" });
     if (refreshToken !== user.refreshToken) return res.status(400).send("refreshToken is invalid");
 
-    const newAccessToken = await authMethod.generateAccessToken({ id, email });
-    if (!newAccessToken) return res.status(400).send("Refresh token failed, try later");
+    const newAccessToken = await authMethod.generateAccessToken({ id });
+    if (!newAccessToken) return res.send({ error: "Refresh token failed, try later" });
 
     if (process.env.NODE_ENV === "development") await (global as any).delay(1000);
 
-    res.send({ accessToken: newAccessToken });
+    res.send({ ok: true, accessToken: newAccessToken });
   } catch (e) {
+    res.send({ error: "refresh token failed" });
     console.log(e);
   }
 };
 
-const userController = { getUserInfo, register, login, checkEmail, refreshToken };
+const userController = { getUserInfo, checkEmail, confirmEmailCode, refreshToken };
 
 export default userController;

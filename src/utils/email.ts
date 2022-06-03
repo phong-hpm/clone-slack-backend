@@ -1,3 +1,18 @@
+import nodemailer from "nodemailer";
+
+export let emailTransporter: nodemailer.Transporter;
+
+export const setupEmailTransporter = () => {
+  if (process.env.NODE_ENV === "production") {
+    emailTransporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: { user: process.env.SENDER_EMAIL, pass: process.env.SENDER_PASSWORD },
+    });
+  }
+};
+
 export const validateEmail = (mail: string) => {
   return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(mail);
 };

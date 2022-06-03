@@ -1,16 +1,19 @@
-import bcrypt from "bcrypt";
 import { OAuth2Client } from "google-auth-library";
-import nodemailer from "nodemailer";
 
 import authMethod from "@methods/auth.method";
+
+import userEmailVerifyingModel from "@models/userEmailVerifying";
 import userModel from "@models/user.model";
+
 import teamsService from "@services/team.service";
 
 import { TeamType } from "@database/apis/types";
+
+import { emailTransporter, getEmailTemplate } from "@utils/email";
+
 import { UserInfoViewType } from "@services/types";
 
-import { getEmailTemplate } from "@utils/email";
-import userEmailVerifyingModel from "@models/userEmailVerifying";
+const findUser = userModel.find;
 
 const getById = async (id: string) => {
   return await userModel.getById(id);
@@ -24,52 +27,26 @@ const getByEmail = async (email: string) => {
   return await userModel.getByEmail(email);
 };
 
-const register = async (data: {
-  name: string;
-  realname: string;
-  email: string;
-  password: string;
-}) => {
-  const { name, realname, email, password } = data;
-
+const register = async ({ name, email }: { name: string; email: string }) => {
   const existedUser = await userModel.getByEmail(email);
   if (existedUser) return { error: "email already exists" };
 
-  const hashPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-  const { userView, refreshToken } = await userModel.insertUser({
-    name,
-    realname,
-    email,
-    password: hashPassword,
-  });
-  if (!userView) return { error: "Login failed, try later" };
-  const accessToken = await authMethod.generateAccessToken({
-    id: userView.id,
-    email: userView.email,
-  });
+  const { id, refreshToken } = await userModel.insertUser({ name, email });
+  if (!id) return { error: "resgiter failed" };
+  const accessToken = await authMethod.generateAccessToken({ id });
 
-  return { data: { accessToken, refreshToken: refreshToken, userView } };
+  return { accessToken, refreshToken };
 };
 
-const login = async ({ email, password }: { email: string; password: string }) => {
-  const user = await userModel.getByEmail(email);
-  if (!user) return { error: "Couldn't find email" };
-  if (!bcrypt.compareSync(password, user.password)) return { error: "Password is incorrect" };
+const login = async (email: string) => {
+  const userView = await userModel.getUserInfoByEmail(email);
+  if (!userView) return { error: "Email is not existed" };
 
-  // update new refresh token
-  const refreshToken = await userModel.updateRefreshToken(user.id);
-  const accessToken = await authMethod.generateAccessToken({ id: user.id, email: user.email });
-  if (!accessToken || !refreshToken) return { error: "Login failed, try later" };
+  const refreshToken = await userModel.updateRefreshToken(userView.id);
+  const accessToken = await authMethod.generateAccessToken({ id: userView.id });
+  if (!accessToken || !refreshToken) return { error: "Login failed" };
 
-  const userView = await userModel.getUserInfo(user.id);
-
-  const data = {
-    accessToken,
-    refreshToken,
-    userView,
-  };
-
-  return { data };
+  return { accessToken, refreshToken };
 };
 
 // this service haven't finish yet
@@ -86,8 +63,9 @@ const verifyGoogleIdToken = async (idToken: string) => {
   console.log("payload", payload);
 };
 
-const sendVerifyCodeEmail = async (email: string) => {
-  const verifyNumber = Math.floor(Math.random() * 1000000);
+const sendVerifyCode = async (email: string) => {
+  const verifyNumber =
+    process.env.NODE_ENV === "production" ? Math.floor(Math.random() * 1000000) : 111111;
   const verifyString = `${String(verifyNumber).slice(0, 3)}-${String(verifyNumber).slice(3)}`;
 
   let userEmailVerifying = await userEmailVerifyingModel.find({ email });
@@ -95,30 +73,33 @@ const sendVerifyCodeEmail = async (email: string) => {
   if (userEmailVerifying) {
     await userEmailVerifyingModel.remove(userEmailVerifying.id);
   }
-
-  const emailTransporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-    auth: { user: process.env.SENDER_EMAIL, pass: process.env.SENDER_PASSWORD },
-  });
-
   userEmailVerifying = await userEmailVerifyingModel.insert({
     email,
     verifyCode: String(verifyNumber),
   });
 
-  const mailOptions = {
-    from: "Slack Clone <slackclonesup@gmail.com>",
-    to: email,
-    subject: `Slack confirmation code: ${verifyString}`,
-    html: getEmailTemplate(verifyString),
-  };
+  if (process.env.NODE_ENV === "production") {
+    const mailOptions = {
+      from: "Slack Clone <slackclonesup@gmail.com>",
+      to: email,
+      subject: `Slack confirmation code: ${verifyString}`,
+      html: getEmailTemplate(verifyString),
+    };
 
-  // don't wait for [sendMail]
-  emailTransporter.sendMail(mailOptions);
+    // don't wait for [sendMail]
+    emailTransporter.sendMail(mailOptions);
+  }
 
   return userEmailVerifying;
+};
+
+const confirmVerifyCode = async ({ email, verifyCode }: { email: string; verifyCode: string }) => {
+  const userEmailVerifying = await userEmailVerifyingModel.find({ email });
+  const isValid = userEmailVerifying?.verifyCode === verifyCode;
+
+  if (!isValid) return false;
+  await userEmailVerifyingModel.remove(userEmailVerifying.id);
+  return true;
 };
 
 const getUserView = async (id: string) => {
@@ -140,7 +121,9 @@ const getUserInfo = async (id: string) => {
 };
 
 const userService = {
-  sendVerifyCodeEmail,
+  findUser,
+  sendVerifyCode,
+  confirmVerifyCode,
   getByEmail,
   getUserInfosByIdList,
   getById,

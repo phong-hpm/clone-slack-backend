@@ -4,6 +4,7 @@ import filesController from "@controllers/file.controller";
 
 const router = Router({ mergeParams: true });
 
+router.get("/marketing/:page/:type/:fileName", filesController.getMarketingFile);
 router.get("/avatar/:fileName", filesController.getAvatar);
 router.get("/image/:fileName", filesController.getImage);
 router.get("/thumb/:fileName", filesController.getThumbnail);

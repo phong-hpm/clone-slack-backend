@@ -2,11 +2,11 @@ import fs from "fs";
 import fileService from "@services/file.service";
 import { Request, RequestHandlerCustom, Response } from "src/types";
 
-const getFile = (req: Request, res: Response, type: string) => {
+const getFile = (req: Request, res: Response, path: string) => {
   try {
     const { fileName } = req.params;
     const folderPath = `${process.cwd()}/src/_files`;
-    const filePath = `${folderPath}/${type}/${fileName}`;
+    const filePath = `${folderPath}/${path}/${fileName}`;
     if (fileService.checkFileExists(filePath)) {
       res.sendFile(filePath);
     } else {
@@ -26,6 +26,11 @@ const downloadFile = (req: Request, res: Response, type: string) => {
   } catch (e) {
     console.log(e);
   }
+};
+
+const getMarketingFile: RequestHandlerCustom = async (req, res) => {
+  const { page, type } = req.params;
+  getFile(req, res, `marketing/${page}/${type}`);
 };
 
 const getAvatar: RequestHandlerCustom = async (req, res) => {
@@ -95,6 +100,7 @@ const downloadVideo: RequestHandlerCustom = async (req, res) => {
 };
 
 const fileController = {
+  getMarketingFile,
   getAvatar,
   getImage,
   getThumbnail,

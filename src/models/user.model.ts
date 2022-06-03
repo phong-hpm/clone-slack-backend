@@ -4,8 +4,22 @@ import { generateId } from "@utils/generateId";
 
 import { UserInfoType } from "@database/apis/types";
 
+const find = usersTable.find;
+
 const getById = async (id: string) => {
   return usersTable.readById(id);
+};
+
+const getByEmail = async (email: string) => {
+  return await usersTable.find({ email });
+};
+
+const getUserInfo = async (id: string) => {
+  return userInfoTable.readById(id);
+};
+
+const getUserInfoByEmail = async (email: string) => {
+  return userInfoTable.find({ email });
 };
 
 const getUserInfosByIdList = async (idList: string[]) => {
@@ -17,33 +31,19 @@ const getUserInfosByIdList = async (idList: string[]) => {
   return list;
 };
 
-const getByEmail = async (email: string) => {
-  const users = await usersTable.read();
-  return Object.values(users).find((user) => user.email === email);
-};
-
-const getUserInfo = async (id: string) => {
-  return userInfoTable.readById(id);
-};
-
-const insertUser = async (data: {
-  name: string;
-  realname: string;
-  email: string;
-  password: string;
-}) => {
-  const { name, realname, email, password } = data;
+const insertUser = async (data: { name: string; email: string }) => {
+  const { name, email } = data;
   const id = `U-${generateId()}`;
 
   // add user
-  await usersTable.insert(id, { id, email, password, refreshToken: "" });
+  await usersTable.insert(id, { id, email, refreshToken: "" });
 
   // add userView
-  const userView = await userInfoTable.insert(id, {
+  await userInfoTable.insert(id, {
     id,
     name,
-    realname,
     email,
+    realname: "",
     timeZone: "",
     teams: [],
   });
@@ -51,22 +51,21 @@ const insertUser = async (data: {
   // setnew refresh token
   const refreshToken = await updateRefreshToken(id);
 
-  return { userView, refreshToken };
+  return { id, refreshToken };
 };
 
 const updateRefreshToken = async (id: string) => {
-  // get refersh token
-  const user = await usersTable.readById(id);
-  const refreshToken = await authMethod.generateRefreshToken({ id: user.id, email: user.email });
-
+  const refreshToken = await authMethod.generateRefreshToken({ id });
   await usersTable.update(id, { refreshToken });
   return refreshToken;
 };
 
 const userModel = {
+  find,
   getById,
   getByEmail,
   getUserInfo,
+  getUserInfoByEmail,
   getUserInfosByIdList,
   insertUser,
   updateRefreshToken,
