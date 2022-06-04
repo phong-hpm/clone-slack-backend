@@ -4,7 +4,6 @@ import messagesService from "@services/message.service";
 
 import { IoTeamData } from "@socket/spaces/team.space";
 
-import { channelIdRegExp } from "@utils/generateId";
 import { SocketEvent, SocketEventDefault } from "@utils/constant";
 
 import {
@@ -73,7 +72,7 @@ class IoChannelData {
 
 const channelSocketHandler = () => {
   const io = global.io;
-  const channelWorkspace = io.of(channelIdRegExp);
+  const channelWorkspace = io.of(/^\/T-[a-zA-Z0-9]+\/(C|D|G)-[a-zA-Z0-9]+$/);
 
   channelWorkspace.on(SocketEventDefault.CONNECTION, (socket: SocketType) => {
     const namespace = socket.nsp;
@@ -166,6 +165,7 @@ const channelSocketHandler = () => {
     socket.on(SocketEvent.EMIT_LOAD_MESSAGES, async () => {
       try {
         const { messages, updatedTime } = await channelService.getHistory(channelId);
+
         socket.emit(SocketEvent.ON_MESSAGES, { channelId, messages, updatedTime });
 
         // clear [unreadMessageCount] for this [userId] in [channelId]

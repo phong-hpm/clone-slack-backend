@@ -2,7 +2,6 @@ import teamsService from "@services/team.service";
 import channelService from "@services/channel.service";
 
 // utils
-import { teamIdRegExp } from "@utils/generateId";
 import { SocketEvent, SocketEventDefault } from "@utils/constant";
 
 import { EmitAddChannelDataType, EmitPayload, IoTeamType, SocketType } from "@socket/types";
@@ -49,7 +48,7 @@ export class IoTeamData {
 
 const teamSocketHandler = () => {
   const io = global.io;
-  const workspace = io.of(teamIdRegExp);
+  const workspace = io.of(/^\/T-[a-zA-Z0-9]+$/);
 
   workspace.on(SocketEventDefault.CONNECTION, (socket: SocketType) => {
     const namespace = socket.nsp;
