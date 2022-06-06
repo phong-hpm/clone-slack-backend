@@ -49,6 +49,36 @@ const update = async (id: string, data: Partial<ChannelType>) => {
   return channelsTable.update(id, data);
 };
 
+const addUsers = async (id: string, { userIds }: { userIds: string[] }) => {
+  let channel = await channelModel.getById(id);
+  const messageIds = await channelMessagesTable.readById(id);
+
+  const userListSet = new Set(channel.users);
+  const unreadMessageCount = { ...channel.unreadMessageCount };
+
+  userIds.forEach((userId) => {
+    userListSet.add(userId);
+    if (!unreadMessageCount[userId]) unreadMessageCount[userId] = messageIds.length;
+  });
+  channel = await channelModel.update(id, { users: [...userListSet.values()], unreadMessageCount });
+
+  return channel;
+};
+
+const removeUser = async (id: string, { userId }: { userId: string }) => {
+  let channel = await channelModel.getById(id);
+
+  const unreadMessageCount = { ...channel.unreadMessageCount };
+  delete unreadMessageCount[userId];
+
+  channel = await channelModel.update(id, {
+    users: channel.users.filter((user) => user !== userId),
+    unreadMessageCount,
+  });
+
+  return channel;
+};
+
 const increateUnread = async (id: string, ignoreUsers: string[] = []) => {
   const channel = await channelsTable.readById(id);
   const unreadMessageCount = { ...channel.unreadMessageCount };
@@ -91,6 +121,15 @@ const clearUnread = async (id: string, users: string[] = []) => {
   };
 };
 
-const channelModel = { getById, find, create, update, increateUnread, clearUnread };
+const channelModel = {
+  getById,
+  find,
+  create,
+  update,
+  addUsers,
+  removeUser,
+  increateUnread,
+  clearUnread,
+};
 
 export default channelModel;

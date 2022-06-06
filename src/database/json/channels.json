@@ -106,12 +106,10 @@
     "type": "channel",
     "name": "Channel 2",
     "users": [
-      "U-HTtW5jrA7",
       "U-o29OsxUsn",
       "U-zcnTpvyLO"
     ],
     "unreadMessageCount": {
-      "U-HTtW5jrA7": 0,
       "U-o29OsxUsn": 0,
       "U-zcnTpvyLO": 0
     },

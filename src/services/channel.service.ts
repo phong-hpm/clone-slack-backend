@@ -7,7 +7,8 @@ import messagesService from "@services/message.service";
 import { ChannelType, MessageType } from "@database/apis/types";
 import { ChannelViewType, MessageViewType } from "@services/types";
 
-const getChannelMessages = async (messageIds: string[] = []) => {
+// return list of [MessageView] which descending sorted by [createdTime]
+const getChannelMessagesDESC = async (messageIds: string[] = []) => {
   const messages: MessageViewType[] = [];
   for (let i = 0; i < messageIds.length; i++) {
     const message = await messagesService.getById(messageIds[i]);
@@ -19,7 +20,7 @@ const getChannelMessages = async (messageIds: string[] = []) => {
       messages.push(message as unknown as MessageViewType);
     }
   }
-  return messages;
+  return messages.sort((a, b) => b.createdTime - a.createdTime);
 };
 
 export const getById = async (id: string) => {
@@ -30,11 +31,42 @@ const find = async (searchObj: Partial<ChannelType>) => {
   return channelModel.find(searchObj);
 };
 
-export const getHistory = async (id: string) => {
+export const getHistory = async (
+  id: string,
+  { limit, beforeTime }: { limit: number; beforeTime?: number }
+) => {
   const messageIds = await channelMessagesModel.getById(id);
   const channel = await channelModel.getById(id);
-  const messages = await getChannelMessages(messageIds);
-  return { messages, updatedTime: channel.updatedTime };
+  // DESC sorted by createdTime
+  const allMessagesDESC = await getChannelMessagesDESC(messageIds);
+
+  let startIndex = 0;
+  if (beforeTime) {
+    startIndex = allMessagesDESC.findIndex(({ createdTime }) => createdTime === beforeTime) + 1;
+  }
+
+  // there are no more messages left
+  if (startIndex < 0)
+    return {
+      messages: [],
+      updatedTime: channel.updatedTime,
+      loadedFromTime: beforeTime,
+      hasMore: false,
+    };
+
+  const messagesDESC: MessageType[] = [];
+  for (let i = startIndex; i < startIndex + limit; i++) {
+    if (allMessagesDESC[i]) messagesDESC.push(allMessagesDESC[i]);
+  }
+
+  const messages = [...messagesDESC].reverse();
+
+  return {
+    messages,
+    updatedTime: channel.updatedTime,
+    loadedFromTime: messages[0]?.createdTime || 0,
+    hasMore: allMessagesDESC.length > startIndex + limit,
+  };
 };
 
 const getView = async (id: string, userId: string) => {
@@ -66,6 +98,14 @@ const add = async (data: Partial<ChannelType> & { userId?: string; teamId: strin
   return channelModel.create(data);
 };
 
+const addUsersToChannel = async (id: string, data: { userIds: string[] }) => {
+  return channelModel.addUsers(id, data);
+};
+
+const removeUserFromChannel = async (id: string, userId: { userId: string }) => {
+  return channelModel.removeUser(id, userId);
+};
+
 const updateUpdatedTime = async (id: string, data: { updatedTime: number }) => {
   return channelModel.update(id, data);
 };
@@ -84,6 +124,8 @@ const channelService = {
   getView,
   getHistory,
   add,
+  addUsersToChannel,
+  removeUserFromChannel,
   increateUnread,
   updateUpdatedTime,
   clearUnreadMessageCount,

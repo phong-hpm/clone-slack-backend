@@ -1,6 +1,6 @@
 import userService from "@services/user.service";
 import channelService from "@services/channel.service";
-import messagesService from "@services/message.service";
+import messageService from "@services/message.service";
 
 import { IoTeamData } from "@socket/spaces/team.space";
 
@@ -10,6 +10,7 @@ import {
   EmiStarMessageDataType,
   EmitAddMessageDataType,
   EmitEditMessageDataType,
+  EmitLoadMessageDataType,
   EmitPayload,
   EmitReactionMessageDataType,
   EmitRemoveMessageDataType,
@@ -20,12 +21,15 @@ import {
   IoTeamType,
   SocketType,
 } from "@socket/types";
-import { ChannelType, MessageType } from "@database/apis/types";
+import setupMessageEmiter from "@socket/emiters/message";
+import setupChannelEmiter from "@socket/emiters/channel";
 
-class IoChannelData {
+export class IoChannelData {
+  spaceName: string;
   ioTeamData: IoTeamData;
   teamId: string;
   channelId: string;
+  userId: string;
   socket: SocketType;
   team: IoTeamType;
   channel: IoChannelType;
@@ -37,16 +41,22 @@ class IoChannelData {
     // initiate ioChannels data if it haven't existed
     if (!team.channels[channelId]) {
       // initiate ioChannel data if its haven't exited
-      team.channels[channelId] = { userSocketIds: {} };
+      team.channels[channelId] = { userSocketIds: {}, message: {} };
     }
     team.channels[channelId].userSocketIds[socket.userId] = socket.id;
 
+    this.spaceName = `/${teamId}/${channelId}`;
     this.ioTeamData = ioTeamData;
     this.teamId = teamId;
     this.channelId = channelId;
+    this.userId = socket.userId;
     this.socket = socket;
     this.team = team;
     this.channel = team.channels[channelId];
+  }
+
+  setChannelMessageData(messageData: IoChannelType["message"]) {
+    this.channel.message = messageData;
   }
 
   getChannelData(channelId: string) {
@@ -71,7 +81,6 @@ class IoChannelData {
 }
 
 const channelSocketHandler = () => {
-  const io = global.io;
   const channelWorkspace = io.of(/^\/T-[a-zA-Z0-9]+\/(C|D|G)-[a-zA-Z0-9]+$/);
 
   channelWorkspace.on(SocketEventDefault.CONNECTION, (socket: SocketType) => {
@@ -80,44 +89,148 @@ const channelSocketHandler = () => {
     const [teamId, channelId] = namespace.name.slice(1).split("/");
     const ioChannelData = new IoChannelData({ teamId, channelId, socket });
     const ioTeamData = ioChannelData.ioTeamData;
-    const teamWorkspace = io.of(`/${teamId}`);
 
-    const emitAddedMessage = (channel: ChannelType, message: MessageType) => {
-      const data = { channelId, message, updatedTime: channel.updatedTime };
-      io.of(namespace.name).emit(SocketEvent.ON_ADDED_MESSAGE, data);
-    };
+    const channelEmiter = setupChannelEmiter(ioTeamData);
+    const messageEmiter = setupMessageEmiter(ioChannelData);
 
-    const emitEditedMessage = (channel: ChannelType, message: MessageType) => {
-      const data = { channelId, message, updatedTime: channel.updatedTime };
-      io.of(namespace.name).emit(SocketEvent.ON_EDITED_MESSAGE, data);
-    };
+    socket.on(
+      SocketEvent.EMIT_LOAD_MESSAGES,
+      async (payload: EmitPayload<EmitLoadMessageDataType>) => {
+        try {
+          const { limit } = payload.data;
+          const { messages, updatedTime, loadedFromTime, hasMore } =
+            await channelService.getHistory(channelId, { limit });
+          // clear [unreadMessageCount] for this [userId] in [channelId]
+          await channelService.clearUnreadMessageCount(channelId, [userId]);
 
-    const emitEditedChannelUpdatedTime = (channel: ChannelType) => {
-      try {
-        const eventName = SocketEvent.ON_EDITED_CHANNEL_UPDATED_TIME;
-        const data = { channelId: channel.id, updatedTime: channel.updatedTime };
-        const teamSocketIdList = ioTeamData.getSocketIdListByUserIdList(channel.users);
-        teamWorkspace.to(teamSocketIdList).emit(eventName, data);
-      } catch (e) {
-        console.log(e);
+          messageEmiter.emitLoadMessage({ messages, updatedTime, loadedFromTime, hasMore });
+          channelEmiter.emitEditedChannelUnread(channelId, [userId], { [userId]: 0 });
+        } catch (e) {
+          console.log(e);
+        }
       }
-    };
+    );
 
-    const emitEditedUnreadMessageCount = (
-      id: string,
-      userIds: string[],
-      unreadMessageCount: Record<string, number>
-    ) => {
-      // loop in all users of this [channelId]
-      for (const userId of userIds) {
-        io.of(`${teamId}`)
-          .to(ioTeamData.getSocketId(userId))
-          .emit(SocketEvent.ON_EDITED_CHANNEL_UNREAD_MESSAGE_COUNT, {
-            channelId: id,
-            unreadMessageCount: unreadMessageCount[userId],
-          });
+    socket.on(
+      SocketEvent.EMIT_LOAD_MORE_MESSAGES,
+      async (payload: EmitPayload<EmitLoadMessageDataType>) => {
+        try {
+          const { limit } = payload.data;
+          const ioMessageData = ioChannelData.channel.message;
+
+          // there are no more messages left
+          if (!ioMessageData.hasMore) {
+            ioChannelData.socket.emit(SocketEvent.ON_MORE_MESSAGES, { messages: [] });
+          } else {
+            const { messages, loadedFromTime, hasMore } = await channelService.getHistory(
+              ioChannelData.channelId,
+              { limit, beforeTime: ioMessageData.loadedFromTime }
+            );
+            messageEmiter.emitLoadMoreMessages({ messages, loadedFromTime, hasMore });
+          }
+        } catch (e) {
+          console.log(e);
+        }
       }
-    };
+    );
+
+    // emit new message
+    socket.on(
+      SocketEvent.EMIT_ADD_MESSAGE,
+      async (payload: EmitPayload<EmitAddMessageDataType>) => {
+        try {
+          const { delta } = payload.data;
+          const addParams = { teamId, channelId, userId, delta, ignoreUsers: [] };
+          // they are reading this [channelId]
+          addParams.ignoreUsers = Object.keys(ioChannelData.getAllSocketIds());
+          const { message, unreadMessageCount, channel } = await messageService.add(addParams);
+
+          messageEmiter.emitAddedMessage(message, channel);
+          channelEmiter.emitEditedChannelUnread(channel.id, channel.users, unreadMessageCount);
+          channelEmiter.emitEditedChannelUpdatedTime(channel);
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    );
+
+    // emit edit message
+    socket.on(
+      SocketEvent.EMIT_EDIT_MESSAGE,
+      async (payload: EmitPayload<EmitEditMessageDataType>) => {
+        try {
+          const { id, delta } = payload.data;
+          const { message, channel } = await messageService.editDelta(id, { channelId, delta });
+          messageEmiter.emitEditedMessage(channel, message);
+          channelEmiter.emitEditedChannelUpdatedTime(channel);
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    );
+
+    // emit start message
+    socket.on(
+      SocketEvent.EMIT_STAR_MESSAGE,
+      async (payload: EmitPayload<EmiStarMessageDataType>) => {
+        try {
+          const { id } = payload.data;
+          const { message, channel } = await messageService.editStar(id, { channelId });
+          messageEmiter.emitEditedMessage(channel, message);
+          channelEmiter.emitEditedChannelUpdatedTime(channel);
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    );
+
+    // emit reaction message
+    socket.on(
+      SocketEvent.EMIT_REACTION_MESSAGE,
+      async (payload: EmitPayload<EmitReactionMessageDataType>) => {
+        try {
+          const { id, reactionId } = payload.data;
+          const editParams = { channelId, userId: socket.userId, reactionId };
+          const { message, channel } = await messageService.editReaction(id, editParams);
+          messageEmiter.emitEditedMessage(channel, message);
+          channelEmiter.emitEditedChannelUpdatedTime(channel);
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    );
+
+    // emit remove message
+    socket.on(
+      SocketEvent.EMIT_REMOVE_MESSAGE,
+      async (payload: EmitPayload<EmitRemoveMessageDataType>) => {
+        try {
+          const { id } = payload.data;
+          const { messageId, channel } = await messageService.remove(id, { channelId });
+
+          messageEmiter.emitRemovedMessage(messageId, channel);
+          channelEmiter.emitEditedChannelUpdatedTime(channel);
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    );
+
+    // emit remove message file
+    socket.on(
+      SocketEvent.EMIT_REMOVE_MESSAGE_FILE,
+      async (payload: EmitPayload<EmitRemoveMessageFileDataType>) => {
+        try {
+          const { id, fileId } = payload.data;
+          const { message, channel } = await messageService.removeFile(id, { channelId, fileId });
+
+          messageEmiter.emitEditedMessage(channel, message);
+          channelEmiter.emitEditedChannelUpdatedTime(channel);
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    );
 
     const emitShareMessageToChannel = async (payload: EmitPayload<EmitShareToChannelDataType>) => {
       try {
@@ -140,17 +253,17 @@ const channelSocketHandler = () => {
           message,
           unreadMessageCount,
           channel: toChannel,
-        } = await messagesService.share(shareParams);
+        } = await messageService.share(shareParams);
 
         // emit new message to client
-        io.of(`/${teamId}/${toChannelId}`).emit(SocketEvent.ON_ADDED_MESSAGE, {
+        io._nsps.get(`/${teamId}/${toChannelId}`)?.emit(SocketEvent.ON_ADDED_MESSAGE, {
           toChannelId,
           message,
           updatedTime: toChannel.updatedTime,
         });
 
-        emitEditedUnreadMessageCount(toChannel.id, toChannel.users, unreadMessageCount);
-        emitEditedChannelUpdatedTime(toChannel);
+        channelEmiter.emitEditedChannelUnread(toChannel.id, toChannel.users, unreadMessageCount);
+        channelEmiter.emitEditedChannelUpdatedTime(toChannel);
 
         socket.emit(SocketEvent.ON_SHARE_MESSAGE_TO_CHANNEL, {
           toChannelId,
@@ -161,43 +274,6 @@ const channelSocketHandler = () => {
         console.log(e);
       }
     };
-
-    socket.on(SocketEvent.EMIT_LOAD_MESSAGES, async () => {
-      try {
-        const { messages, updatedTime } = await channelService.getHistory(channelId);
-
-        socket.emit(SocketEvent.ON_MESSAGES, { channelId, messages, updatedTime });
-
-        // clear [unreadMessageCount] for this [userId] in [channelId]
-        await channelService.clearUnreadMessageCount(channelId, [userId]);
-
-        emitEditedUnreadMessageCount(channelId, [userId], { [userId]: 0 });
-      } catch (e) {
-        console.log(e);
-      }
-    });
-
-    // emit new message
-    socket.on(
-      SocketEvent.EMIT_ADD_MESSAGE,
-      async (payload: EmitPayload<EmitAddMessageDataType>) => {
-        try {
-          const { delta } = payload.data;
-
-          const addParams = { teamId, channelId, userId, delta, ignoreUsers: [] };
-          // they are reading this [channelId]
-          addParams.ignoreUsers = Object.keys(ioChannelData.getAllSocketIds());
-          const { message, unreadMessageCount, channel } = await messagesService.add(addParams);
-
-          // emit new messages added to all connected users
-          emitAddedMessage(channel, message);
-          emitEditedUnreadMessageCount(channel.id, channel.users, unreadMessageCount);
-          emitEditedChannelUpdatedTime(channel);
-        } catch (e) {
-          console.log(e);
-        }
-      }
-    );
 
     // emit share message
     socket.on(SocketEvent.EMIT_SHARE_MESSAGE_TO_CHANNEL, emitShareMessageToChannel);
@@ -234,8 +310,10 @@ const channelSocketHandler = () => {
             const channelView = await channelService.getView(channel.id, socket.userId);
 
             // emit new channel to client
-            teamWorkspace
-              .to(ioTeamData.getSocketIdListByUserIdList(channel.users))
+            const socketList = ioTeamData.getSocketIdListByUserIdList(channel.users);
+            io._nsps
+              .get(`/${teamId}`)
+              ?.to(socketList)
               .emit(SocketEvent.ON_ADDED_CHANNEL, channelView);
           }
 
@@ -247,90 +325,12 @@ const channelSocketHandler = () => {
       }
     );
 
-    // emit edit message
-    socket.on(
-      SocketEvent.EMIT_EDIT_MESSAGE,
-      async (payload: EmitPayload<EmitEditMessageDataType>) => {
-        try {
-          const { id, delta } = payload.data;
-          const { message, channel } = await messagesService.editDelta(id, { channelId, delta });
-          emitEditedMessage(channel, message);
-          emitEditedChannelUpdatedTime(channel);
-        } catch (e) {
-          console.log(e);
-        }
-      }
-    );
-
-    // emit start message
-    socket.on(
-      SocketEvent.EMIT_STAR_MESSAGE,
-      async (payload: EmitPayload<EmiStarMessageDataType>) => {
-        try {
-          const { id } = payload.data;
-          const { message, channel } = await messagesService.editStar(id, { channelId });
-          emitEditedMessage(channel, message);
-          emitEditedChannelUpdatedTime(channel);
-        } catch (e) {
-          console.log(e);
-        }
-      }
-    );
-
-    // emit reaction message
-    socket.on(
-      SocketEvent.EMIT_REACTION_MESSAGE,
-      async (payload: EmitPayload<EmitReactionMessageDataType>) => {
-        try {
-          const { id, reactionId } = payload.data;
-          const editParams = { channelId, userId: socket.userId, reactionId };
-          const { message, channel } = await messagesService.editReaction(id, editParams);
-          emitEditedMessage(channel, message);
-          emitEditedChannelUpdatedTime(channel);
-        } catch (e) {
-          console.log(e);
-        }
-      }
-    );
-
-    // emit remove message
-    socket.on(
-      SocketEvent.EMIT_REMOVE_MESSAGE,
-      async (payload: EmitPayload<EmitRemoveMessageDataType>) => {
-        try {
-          const { id } = payload.data;
-          const { messageId, channel } = await messagesService.remove(id, { channelId });
-          io.of(namespace.name).emit(SocketEvent.ON_REMOVED_MESSAGE, {
-            channelId,
-            messageId,
-            updatedTime: channel.updatedTime,
-          });
-
-          emitEditedChannelUpdatedTime(channel);
-        } catch (e) {
-          console.log(e);
-        }
-      }
-    );
-
-    // emit remove message file
-    socket.on(
-      SocketEvent.EMIT_REMOVE_MESSAGE_FILE,
-      async (payload: EmitPayload<EmitRemoveMessageFileDataType>) => {
-        try {
-          const { id, fileId } = payload.data;
-          const { message, channel } = await messagesService.removeFile(id, { channelId, fileId });
-
-          emitEditedMessage(channel, message);
-          emitEditedChannelUpdatedTime(channel);
-        } catch (e) {
-          console.log(e);
-        }
-      }
-    );
-
     socket.on(SocketEventDefault.DISCONNECT, () => {
       ioChannelData.removeSocketId();
+    });
+
+    socket.on(SocketEventDefault.ERROR, (error) => {
+      console.log("SocketEventDefault.CONNECT_ERROR", error);
     });
   });
 

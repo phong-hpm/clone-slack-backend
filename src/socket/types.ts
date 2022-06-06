@@ -4,6 +4,10 @@ import { DefaultEventsMap } from "socket.io/dist/typed-events";
 
 export interface IoChannelType {
   userSocketIds?: Record<string, string>;
+  message: {
+    loadedFromTime?: number;
+    hasMore?: boolean;
+  };
 }
 
 export interface IoTeamType {
@@ -33,8 +37,20 @@ export interface EmitAddChannelDataType {
   name: string;
   desc?: string;
 }
+export interface EmitAddUsersToChannelDataType {
+  id: string;
+  userIds: string[];
+}
+export interface EmitRemoveUserFromChannelDataType {
+  id: string;
+  userId: string;
+}
 
 // messages.space.ts -----------------
+
+export interface EmitLoadMessageDataType {
+  limit: number;
+}
 
 export interface EmitAddMessageDataType {
   delta: MessageType["delta"];

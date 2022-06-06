@@ -1,12 +1,21 @@
 import teamsService from "@services/team.service";
 import channelService from "@services/channel.service";
+import userService from "@services/user.service";
 
 // utils
 import { SocketEvent, SocketEventDefault } from "@utils/constant";
 
-import { EmitAddChannelDataType, EmitPayload, IoTeamType, SocketType } from "@socket/types";
+import {
+  EmitAddChannelDataType,
+  EmitAddUsersToChannelDataType,
+  EmitPayload,
+  EmitRemoveUserFromChannelDataType,
+  IoTeamType,
+  SocketType,
+} from "@socket/types";
 
 export class IoTeamData {
+  spaceName: string;
   teamId: string;
   socket: SocketType;
   team: IoTeamType;
@@ -21,6 +30,7 @@ export class IoTeamData {
     // initiate socketUser to userSocketIds
     if (socket) global.io.teams[teamId].userSocketIds[socket.userId] = socket.id;
 
+    this.spaceName = `/${teamId}`;
     this.teamId = teamId;
     this.socket = socket;
     this.team = global.io.teams[this.teamId];
@@ -52,6 +62,7 @@ const teamSocketHandler = () => {
 
   workspace.on(SocketEventDefault.CONNECTION, (socket: SocketType) => {
     const namespace = socket.nsp;
+    const userId = socket.userId;
     const teamId = namespace.name.slice(1);
     const ioTeamData = new IoTeamData({ teamId, socket });
 
@@ -85,23 +96,53 @@ const teamSocketHandler = () => {
       SocketEvent.EMIT_ADD_CHANNEL,
       async (payload: EmitPayload<EmitAddChannelDataType>) => {
         try {
-          const { data } = payload;
-          const channel = await channelService.add({
-            teamId,
-            type: "channel",
-            userId: socket.userId,
-            name: data.name,
-            desc: data.desc,
-          });
+          const { name, desc } = payload.data;
+          const channel = await channelService.add({ teamId, type: "channel", userId, name, desc });
           const channelView = await channelService.getView(channel.id, socket.userId);
 
           // emit to users of this channel only
-          channel.users.forEach((user) => {
-            if (!ioTeamData.getSocketId(user)) return;
-            io.of(namespace.name)
-              .to(ioTeamData.getSocketId(user))
-              .emit(SocketEvent.ON_ADDED_CHANNEL, channelView);
-          });
+          const socketIdList = ioTeamData.getSocketIdListByUserIdList(channel.users);
+          io.of(namespace.name).to(socketIdList).emit(SocketEvent.ON_ADDED_CHANNEL, channelView);
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    );
+
+    socket.on(
+      SocketEvent.EMIT_ADD_USERS_TO_CHANNEL,
+      async (payload: EmitPayload<EmitAddUsersToChannelDataType>) => {
+        try {
+          const { id, userIds: userTargetIds } = payload.data;
+          const channel = await channelService.addUsersToChannel(id, { userIds: userTargetIds });
+          const userInfos = await userService.getUserInfosByIdList(channel.users);
+
+          const socketIdList = ioTeamData.getSocketIdListByUserIdList(channel.users);
+          io.of(namespace.name)
+            .to(socketIdList)
+            .emit(SocketEvent.ON_EDITED_CHANNEL_USERS, {
+              channelId: id,
+              userIds: channel.users,
+              users: Object.values(userInfos),
+            });
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    );
+
+    socket.on(
+      SocketEvent.EMIT_REMOVE_USER_FROM_CHANNEL,
+      async (payload: EmitPayload<EmitRemoveUserFromChannelDataType>) => {
+        try {
+          const { id, userId: userTargetId } = payload.data;
+          const channel = await channelService.removeUserFromChannel(id, { userId: userTargetId });
+          const channelView = await channelService.getView(channel.id, socket.userId);
+
+          const socketIdList = ioTeamData.getSocketIdListByUserIdList(channel.users);
+          io.of(namespace.name)
+            .to(socketIdList)
+            .emit(SocketEvent.ON_EDITED_CHANNEL, { channel: channelView });
         } catch (e) {
           console.log(e);
         }
