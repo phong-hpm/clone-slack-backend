@@ -37,17 +37,20 @@ export interface TeamType {
 
 export interface ChannelType {
   id: string;
-  type: "channel" | "direct_message" | "group_message";
+  type: "general" | "public_channel" | "private_channel" | "direct_message" | "group_message";
   name: string;
-  desc?: string;
   users: string[];
   unreadMessageCount: Record<string, number>;
   team: string;
   creator: string;
   createdTime: number;
   updatedTime: number;
+  desc?: string;
   partner?: UserInfoViewType;
   avatar?: string;
+  topic?: string;
+  notification?: "all" | "mention" | "off" | "muted";
+  isStarred?: boolean;
 }
 
 export interface MessageType {
@@ -57,7 +60,7 @@ export interface MessageType {
   team: string;
   user: string;
   isEdited?: boolean;
-  isStared?: boolean;
+  isStarred?: boolean;
   reactions: Record<string, { id: string; users: string[]; count: number }>;
   files?: MessageFileType[];
   sharedMessageId?: string;

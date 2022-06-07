@@ -1,12 +1,16 @@
 import { IoTeamData } from "@socket/spaces/team.space";
 
-import emitEditedChannelUpdatedTime from "./emitEditedChannelUpdatedTime";
+import emitAddedChannel from "./emitAddedChannel";
+import emitEditedChannel from "./emitEditedChannel";
 import emitEditedChannelUnread from "./emitEditedChannelUnread";
+import emitEditedChannelUpdatedTime from "./emitEditedChannelUpdatedTime";
 
 const setupChannelEmiter = (ioChannelData: IoTeamData) => {
   return {
-    emitEditedChannelUpdatedTime: emitEditedChannelUpdatedTime(ioChannelData),
+    emitAddedChannel: emitAddedChannel(ioChannelData),
+    emitEditedChannel: emitEditedChannel(ioChannelData),
     emitEditedChannelUnread: emitEditedChannelUnread(ioChannelData),
+    emitEditedChannelUpdatedTime: emitEditedChannelUpdatedTime(ioChannelData),
   };
 };
 

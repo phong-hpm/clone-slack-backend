@@ -1,4 +1,4 @@
-import { MessageType } from "@database/apis/types";
+import { ChannelType, MessageType } from "@database/apis/types";
 import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 
@@ -44,6 +44,14 @@ export interface EmitAddUsersToChannelDataType {
 export interface EmitRemoveUserFromChannelDataType {
   id: string;
   userId: string;
+}
+export interface EmitEditNameChannelDataType {
+  id: string;
+  name: string;
+}
+export interface EmitEditChannelOptionalFieldsDataType
+  extends Partial<Pick<ChannelType, "isStarred" | "topic" | "desc" | "notification">> {
+  id: string;
 }
 
 // messages.space.ts -----------------

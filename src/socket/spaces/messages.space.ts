@@ -171,11 +171,11 @@ const channelSocketHandler = () => {
 
     // emit start message
     socket.on(
-      SocketEvent.EMIT_STAR_MESSAGE,
+      SocketEvent.EMIT_STARRED_MESSAGE,
       async (payload: EmitPayload<EmiStarMessageDataType>) => {
         try {
           const { id } = payload.data;
-          const { message, channel } = await messageService.editStar(id, { channelId });
+          const { message, channel } = await messageService.editStarred(id, { channelId });
           messageEmiter.emitEditedMessage(channel, message);
           channelEmiter.emitEditedChannelUpdatedTime(channel);
         } catch (e) {
@@ -309,12 +309,7 @@ const channelSocketHandler = () => {
             });
             const channelView = await channelService.getView(channel.id, socket.userId);
 
-            // emit new channel to client
-            const socketList = ioTeamData.getSocketIdListByUserIdList(channel.users);
-            io._nsps
-              .get(`/${teamId}`)
-              ?.to(socketList)
-              .emit(SocketEvent.ON_ADDED_CHANNEL, channelView);
+            channelEmiter.emitAddedChannel(channelView);
           }
 
           // after create new [group_message], share this [sharedMessageId] to [group_message]

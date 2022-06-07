@@ -89,8 +89,8 @@ const editDelta = async (
   return { message, channel };
 };
 
-const editStar = async (id: string, { channelId }: { channelId: string }) => {
-  const message = await messageModel.updateStar(id);
+const editStarred = async (id: string, { channelId }: { channelId: string }) => {
+  const message = await messageModel.updateStarred(id);
   // update modify in [channels]
   const channel = await channelService.updateUpdatedTime(channelId, {
     updatedTime: message.updatedTime,
@@ -184,7 +184,7 @@ const messageService = {
   removeFile,
   remove,
   editReaction,
-  editStar,
+  editStarred,
   editDelta,
   share,
   add,

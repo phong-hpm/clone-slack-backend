@@ -31,6 +31,8 @@ const find = async (searchObj: Partial<ChannelType>) => {
   return channelModel.find(searchObj);
 };
 
+const update = channelModel.update;
+
 export const getHistory = async (
   id: string,
   { limit, beforeTime }: { limit: number; beforeTime?: number }
@@ -121,6 +123,7 @@ const clearUnreadMessageCount = async (id: string, users?: string[]) => {
 const channelService = {
   getById,
   find,
+  update,
   getView,
   getHistory,
   add,

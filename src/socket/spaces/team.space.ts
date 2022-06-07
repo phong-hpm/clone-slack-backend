@@ -12,7 +12,10 @@ import {
   EmitRemoveUserFromChannelDataType,
   IoTeamType,
   SocketType,
+  EmitEditNameChannelDataType,
+  EmitEditChannelOptionalFieldsDataType,
 } from "@socket/types";
+import setupChannelEmiter from "@socket/emiters/channel";
 
 export class IoTeamData {
   spaceName: string;
@@ -66,6 +69,8 @@ const teamSocketHandler = () => {
     const teamId = namespace.name.slice(1);
     const ioTeamData = new IoTeamData({ teamId, socket });
 
+    const channelEmiter = setupChannelEmiter(ioTeamData);
+
     // on users online
     socket.broadcast.emit(SocketEvent.ON_USER_ONLINE, socket.userId);
 
@@ -97,12 +102,16 @@ const teamSocketHandler = () => {
       async (payload: EmitPayload<EmitAddChannelDataType>) => {
         try {
           const { name, desc } = payload.data;
-          const channel = await channelService.add({ teamId, type: "channel", userId, name, desc });
+          const channel = await channelService.add({
+            teamId,
+            type: "public_channel",
+            userId,
+            name,
+            desc,
+          });
           const channelView = await channelService.getView(channel.id, socket.userId);
 
-          // emit to users of this channel only
-          const socketIdList = ioTeamData.getSocketIdListByUserIdList(channel.users);
-          io.of(namespace.name).to(socketIdList).emit(SocketEvent.ON_ADDED_CHANNEL, channelView);
+          channelEmiter.emitAddedChannel(channelView);
         } catch (e) {
           console.log(e);
         }
@@ -132,20 +141,56 @@ const teamSocketHandler = () => {
     );
 
     socket.on(
-      SocketEvent.EMIT_REMOVE_USER_FROM_CHANNEL,
+      SocketEvent.EMIT_USER_LEAVE_CHANNEL,
       async (payload: EmitPayload<EmitRemoveUserFromChannelDataType>) => {
         try {
-          const { id, userId: userTargetId } = payload.data;
-          const channel = await channelService.removeUserFromChannel(id, { userId: userTargetId });
-          const channelView = await channelService.getView(channel.id, socket.userId);
+          const { id } = payload.data;
+          const channel = await channelService.removeUserFromChannel(id, { userId });
 
-          const socketIdList = ioTeamData.getSocketIdListByUserIdList(channel.users);
-          io.of(namespace.name)
-            .to(socketIdList)
-            .emit(SocketEvent.ON_EDITED_CHANNEL, { channel: channelView });
+          socket.emit(SocketEvent.ON_REMOVED_CHANNEL, { channelId: channel.id });
         } catch (e) {
           console.log(e);
         }
+      }
+    );
+
+    socket.on(
+      SocketEvent.EMIT_EDIT_CHANNEL_NAME,
+      async (payload: EmitPayload<EmitEditNameChannelDataType>) => {
+        const { id, name } = payload.data;
+        const channelOwner = await channelService.find({ id, creator: userId });
+
+        // [userId] is not channel's creator
+        if (!channelOwner) return;
+        const channel = await channelService.update(id, { name });
+        const channelView = await channelService.getView(channel.id, socket.userId);
+
+        channelEmiter.emitEditedChannel(channelView);
+      }
+    );
+
+    socket.on(
+      SocketEvent.EMIT_EDIT_CHANNEL_OPTIONAL_FIELDS,
+      async (payload: EmitPayload<EmitEditChannelOptionalFieldsDataType>) => {
+        const { id, isStarred, topic, desc, notification } = payload.data;
+        const channel = await channelService.update(id, { isStarred, topic, desc, notification });
+        const channelView = await channelService.getView(channel.id, socket.userId);
+
+        channelEmiter.emitEditedChannel(channelView);
+      }
+    );
+
+    socket.on(
+      SocketEvent.EMIT_CHANGE_TO_PRIVATE_CHANNEL,
+      async (payload: EmitPayload<EmitEditNameChannelDataType>) => {
+        const { id, name } = payload.data;
+        const channel = await channelService.getById(id);
+        if (channel.type !== "group_message") return;
+
+        await channelService.update(id, { name, type: "private_channel" });
+        const channelView = await channelService.getView(channel.id, socket.userId);
+
+        channelEmiter.emitEditedChannel(channelView);
       }
     );
 

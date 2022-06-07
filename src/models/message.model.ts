@@ -30,9 +30,9 @@ const updateDelta = async (id: string, { delta }: { delta: MessageType["delta"] 
   return messagesTable.update(id, { delta, isEdited: true });
 };
 
-const updateStar = async (id: string) => {
+const updateStarred = async (id: string) => {
   const message = await messagesTable.readById(id);
-  return messagesTable.update(id, { isStared: !message.isStared });
+  return messagesTable.update(id, { isStarred: !message.isStarred });
 };
 
 const updateReaction = async (
@@ -93,7 +93,7 @@ const messageModel = {
   getById,
   insert,
   updateDelta,
-  updateStar,
+  updateStarred,
   updateReaction,
   updateFile,
   remove,

@@ -46,7 +46,7 @@
   },
   "C-EM0X5NCuEZ": {
     "id": "C-EM0X5NCuEZ",
-    "type": "channel",
+    "type": "general",
     "name": "general",
     "users": [
       "U-HTtW5jrA7",
@@ -61,11 +61,12 @@
     "creator": "U-o29OsxUsn",
     "createdTime": 1652258957684,
     "updatedTime": 1654355775234,
-    "team": "T-Z4ijiEVH4"
+    "team": "T-Z4ijiEVH4",
+    "notification": "all"
   },
   "C-MvIzFo2t0d": {
     "id": "C-MvIzFo2t0d",
-    "type": "channel",
+    "type": "public_channel",
     "name": "random",
     "users": [
       "U-HTtW5jrA7",
@@ -84,7 +85,7 @@
   },
   "C-YHAtcdvh00": {
     "id": "C-YHAtcdvh00",
-    "type": "channel",
+    "type": "public_channel",
     "name": "Channel 1",
     "users": [
       "U-o29OsxUsn",
@@ -98,12 +99,13 @@
     },
     "creator": "U-o29OsxUsn",
     "createdTime": 1650353609205,
-    "updatedTime": 1654356335988,
-    "team": "T-Z4ijiEVH4"
+    "updatedTime": 1654589660640,
+    "team": "T-Z4ijiEVH4",
+    "topic": "channel topic"
   },
   "C-5MAzkZQJPk": {
     "id": "C-5MAzkZQJPk",
-    "type": "channel",
+    "type": "private_channel",
     "name": "Channel 2",
     "users": [
       "U-o29OsxUsn",
@@ -115,12 +117,13 @@
     },
     "creator": "U-zcnTpvyLO",
     "createdTime": 1650353609206,
-    "updatedTime": 1654309986657,
-    "team": "T-Z4ijiEVH4"
+    "updatedTime": 1654586383779,
+    "team": "T-Z4ijiEVH4",
+    "isStarred": false
   },
   "C-9qpfxSJimU": {
     "id": "C-9qpfxSJimU",
-    "type": "channel",
+    "type": "general",
     "name": "general",
     "users": [
       "U-o29OsxUsn"
@@ -135,7 +138,7 @@
   },
   "C-xVbUORYe16": {
     "id": "C-xVbUORYe16",
-    "type": "channel",
+    "type": "public_channel",
     "name": "random",
     "users": [
       "U-o29OsxUsn"
@@ -147,5 +150,26 @@
     "createdTime": 1650353609201,
     "updatedTime": 1653827029942,
     "team": "T-qdDI80EIY"
+  },
+  "G-zsJZTqrUF": {
+    "id": "G-zsJZTqrUF",
+    "type": "group_message",
+    "name": "Alex, Michael Schneider",
+    "desc": "",
+    "users": [
+      "U-o29OsxUsn",
+      "U-HTtW5jrA7",
+      "U-zcnTpvyLO"
+    ],
+    "unreadMessageCount": {
+      "U-o29OsxUsn": 0,
+      "U-HTtW5jrA7": 1,
+      "U-zcnTpvyLO": 1
+    },
+    "creator": "U-o29OsxUsn",
+    "team": "T-Z4ijiEVH4",
+    "avatar": "http://localhost:8000/files/avatar/U-HTtW5jrA7.jpeg",
+    "createdTime": 1654576759037,
+    "updatedTime": 1654576759047
   }
 }

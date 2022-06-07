@@ -244,7 +244,7 @@
     "type": "message",
     "user": "U-o29OsxUsn",
     "team": "T-Z4ijiEVH4",
-    "isStared": false,
+    "isStarred": false,
     "createdTime": 1651917356460,
     "updatedTime": 1654356334424,
     "files": []
@@ -398,7 +398,7 @@
     "type": "message",
     "user": "U-o29OsxUsn",
     "team": "T-Z4ijiEVH4",
-    "isStared": false,
+    "isStarred": false,
     "createdTime": 1651942800008,
     "updatedTime": 1651942800008,
     "files": []
@@ -429,12 +429,20 @@
         }
       ]
     },
-    "reactions": {},
+    "reactions": {
+      "eyes": {
+        "id": "eyes",
+        "users": [
+          "U-o29OsxUsn"
+        ],
+        "count": 1
+      }
+    },
     "type": "message",
     "user": "U-o29OsxUsn",
     "team": "T-Z4ijiEVH4",
     "createdTime": 1652001447387,
-    "updatedTime": 1652001447387,
+    "updatedTime": 1654589660640,
     "files": []
   },
   "M-W7wIfn9Yikz": {
@@ -477,9 +485,9 @@
     "type": "message",
     "user": "U-HTtW5jrA7",
     "team": "T-Z4ijiEVH4",
-    "isStared": false,
+    "isStarred": false,
     "createdTime": 1652002322572,
-    "updatedTime": 1652002322572,
+    "updatedTime": 1654573047990,
     "files": []
   },
   "M-1UVVqgv20gl": {
@@ -495,7 +503,7 @@
     "type": "message",
     "user": "U-o29OsxUsn",
     "team": "T-Z4ijiEVH4",
-    "isStared": false,
+    "isStarred": false,
     "createdTime": 1652009360776,
     "updatedTime": 1652009360776,
     "files": []
@@ -522,7 +530,7 @@
     "type": "message",
     "user": "U-o29OsxUsn",
     "team": "T-Z4ijiEVH4",
-    "isStared": false,
+    "isStarred": false,
     "createdTime": 1652009367967,
     "updatedTime": 1652009367967,
     "files": []
@@ -555,7 +563,7 @@
         "count": 1
       }
     },
-    "isStared": false,
+    "isStarred": false,
     "createdTime": 1652258943582,
     "updatedTime": 1653591531317,
     "files": []
@@ -598,7 +606,7 @@
         "count": 1
       }
     },
-    "isStared": false,
+    "isStarred": false,
     "createdTime": 1652258957684,
     "updatedTime": 1654324987307,
     "files": []
@@ -642,7 +650,7 @@
         "createdTime": 1652409677233
       }
     ],
-    "isStared": false,
+    "isStarred": false,
     "createdTime": 1652760149205,
     "updatedTime": 1652760149205
   },
@@ -714,5 +722,22 @@
     "files": [],
     "createdTime": 1653495541487,
     "updatedTime": 1653495541487
+  },
+  "M-XmphjH6Xhf": {
+    "id": "M-XmphjH6Xhf",
+    "delta": {
+      "ops": [
+        {
+          "insert": "share\n"
+        }
+      ]
+    },
+    "user": "U-o29OsxUsn",
+    "team": "T-Z4ijiEVH4",
+    "reactions": {},
+    "files": [],
+    "sharedMessageId": "M-S8DBzcEbQMt",
+    "createdTime": 1654576759047,
+    "updatedTime": 1654576759047
   }
 }
