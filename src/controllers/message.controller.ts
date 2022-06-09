@@ -106,7 +106,7 @@ const uploadMessageWithFiles: RequestHandlerCustom = async (req, res) => {
     const io = global.io;
     const socketSpace = io.of(socketNamespace);
 
-    let { message } = await messagesService.add({
+    const { message, channel } = await messagesService.add({
       userId,
       teamId,
       channelId,
@@ -121,19 +121,27 @@ const uploadMessageWithFiles: RequestHandlerCustom = async (req, res) => {
       ignoreUsers: [],
       sharedMessageId: "",
     });
-    socketSpace.emit(SocketEvent.ON_ADDED_MESSAGE, message);
+    socketSpace.emit(SocketEvent.ON_ADDED_MESSAGE, {
+      channelId,
+      message,
+      updatedTime: channel.updatedTime,
+    });
 
     for (const thumbnail of fileThumbs) {
       const uploadedFile = await fileService.upload(thumbnail);
       const { id: messageFileId } = message.files.find((f) => thumbnail.name === f.uploadId);
       if (uploadedFile) {
-        message = await messagesService.updateFileThumbnail(message.id, {
+        const editedMessage = await messagesService.updateFileThumbnail(message.id, {
           fileId: messageFileId,
           thumb: uploadedFile.url,
         });
 
         // emit new message data
-        socketSpace.emit(SocketEvent.ON_EDITED_MESSAGE, message);
+        socketSpace.emit(SocketEvent.ON_EDITED_MESSAGE, {
+          channelId: channel.id,
+          message: editedMessage,
+          updatedTime: channel.updatedTime,
+        });
       }
     }
 
@@ -144,34 +152,46 @@ const uploadMessageWithFiles: RequestHandlerCustom = async (req, res) => {
       // update message url
       let uploadedFile = await fileService.upload(file);
       if (uploadedFile) {
-        message = await messagesService.updateFileUrl(message.id, {
+        const editedMessage = await messagesService.updateFileUrl(message.id, {
           fileId: messageFileId,
           url: uploadedFile.url,
         });
 
         // emit new message data
-        socketSpace.emit(SocketEvent.ON_EDITED_MESSAGE, message);
+        socketSpace.emit(SocketEvent.ON_EDITED_MESSAGE, {
+          channelId: channel.id,
+          message: editedMessage,
+          updatedTime: channel.updatedTime,
+        });
       }
 
       // update message thumbList
       for (const thumbnail of thumbList) {
         uploadedFile = await fileService.upload(thumbnail);
         if (uploadedFile) {
-          message = await messagesService.updateFileThumbList(message.id, {
+          const editedMessage = await messagesService.updateFileThumbList(message.id, {
             fileId: messageFileId,
             thumbList: [uploadedFile.url],
           });
 
           // emit new message data
-          socketSpace.emit(SocketEvent.ON_EDITED_MESSAGE, message);
+          socketSpace.emit(SocketEvent.ON_EDITED_MESSAGE, {
+            channelId: channel.id,
+            message: editedMessage,
+            updatedTime: channel.updatedTime,
+          });
         }
       }
 
-      message = await messagesService.updateFileStatus(message.id, {
+      const editedMessage = await messagesService.updateFileStatus(message.id, {
         fileId: messageFileId,
         status: "done",
       });
-      socketSpace.emit(SocketEvent.ON_EDITED_MESSAGE, message);
+      socketSpace.emit(SocketEvent.ON_EDITED_MESSAGE, {
+        channelId: channel.id,
+        message: editedMessage,
+        updatedTime: channel.updatedTime,
+      });
     }
   } catch (e) {
     res.send({ error: "upload failed" });

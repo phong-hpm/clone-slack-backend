@@ -34,7 +34,7 @@ const confirmEmailCode: RequestHandlerCustom = async (req, res) => {
       return res.send({ error: "email and verifyCode are in valid" });
     }
 
-    const existedUser = userService.findUser(email);
+    const existedUser = await userService.findUser({ email });
 
     let data: { accessToken?: string; refreshToken?: string; error?: string };
 
