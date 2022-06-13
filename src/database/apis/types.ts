@@ -17,6 +17,7 @@ export interface UserInfoType {
   teams: string[];
   createdTime: number;
   updatedTime: number;
+  workspaceUrl: string;
 }
 
 export interface UserEmailVerifyingType {
@@ -49,8 +50,9 @@ export interface ChannelType {
   partner?: UserInfoViewType;
   avatar?: string;
   topic?: string;
-  notification?: "all" | "mention" | "off" | "muted";
+  notification?: "all" | "mention" | "off";
   isStarred?: boolean;
+  isMuted?: boolean;
 }
 
 export interface MessageType {

@@ -172,8 +172,9 @@ const teamSocketHandler = () => {
     socket.on(
       SocketEvent.EMIT_EDIT_CHANNEL_OPTIONAL_FIELDS,
       async (payload: EmitPayload<EmitEditChannelOptionalFieldsDataType>) => {
-        const { id, isStarred, topic, desc, notification } = payload.data;
-        const channel = await channelService.update(id, { isStarred, topic, desc, notification });
+        const { id, isStarred, isMuted, topic, desc, notification } = payload.data;
+        const updateData = { topic, desc, notification, isStarred, isMuted };
+        const channel = await channelService.updateOptionFields(id, updateData);
         const channelView = await channelService.getView(channel.id, socket.userId);
 
         channelEmiter.emitEditedChannel(channelView);

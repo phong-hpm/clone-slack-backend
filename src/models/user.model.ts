@@ -34,6 +34,7 @@ const getUserInfosByIdList = async (idList: string[]) => {
 const insertUser = async (data: { name: string; email: string }) => {
   const { name, email } = data;
   const id = `U-${generateId()}`;
+  const workspaceUrl = `${name.replace(/ /, "").toLocaleLowerCase()}workspace.slack.com`;
 
   // add user
   await usersTable.insert(id, { id, email, refreshToken: "" });
@@ -46,6 +47,7 @@ const insertUser = async (data: { name: string; email: string }) => {
     realname: "",
     timeZone: "",
     teams: [],
+    workspaceUrl,
   });
 
   // setnew refresh token

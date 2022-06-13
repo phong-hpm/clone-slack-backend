@@ -99,9 +99,10 @@
     },
     "creator": "U-o29OsxUsn",
     "createdTime": 1650353609205,
-    "updatedTime": 1654589660640,
+    "updatedTime": 1655003632576,
     "team": "T-Z4ijiEVH4",
-    "topic": "channel topic"
+    "notification": "all",
+    "isMuted": false
   },
   "C-5MAzkZQJPk": {
     "id": "C-5MAzkZQJPk",

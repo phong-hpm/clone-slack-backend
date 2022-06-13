@@ -50,7 +50,7 @@ export interface EmitEditNameChannelDataType {
   name: string;
 }
 export interface EmitEditChannelOptionalFieldsDataType
-  extends Partial<Pick<ChannelType, "isStarred" | "topic" | "desc" | "notification">> {
+  extends Partial<Pick<ChannelType, "isMuted" | "isStarred" | "topic" | "desc" | "notification">> {
   id: string;
 }
 

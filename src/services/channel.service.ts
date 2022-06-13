@@ -33,6 +33,14 @@ const find = async (searchObj: Partial<ChannelType>) => {
 
 const update = channelModel.update;
 
+const updateOptionFields = async (id: string, data: Partial<ChannelType>) => {
+  const updatingData = { ...data };
+  Object.keys(data).forEach((key) => {
+    if (data[key] === undefined) delete updatingData[key];
+  });
+  return channelModel.update(id, updatingData);
+};
+
 export const getHistory = async (
   id: string,
   { limit, beforeTime }: { limit: number; beforeTime?: number }
@@ -124,6 +132,7 @@ const channelService = {
   getById,
   find,
   update,
+  updateOptionFields,
   getView,
   getHistory,
   add,

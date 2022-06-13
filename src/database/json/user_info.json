@@ -8,7 +8,8 @@
     "teams": ["T-Z4ijiEVH4", "T-qdDI80EIY"],
     "avatar": "http://localhost:8000/files/avatar/U-o29OsxUsn.jpeg",
     "createdTime": 1653589513216,
-    "updatedTime": 1653589513216
+    "updatedTime": 1653589513216,
+    "workspaceUrl": "phonghoworkspace.slack.com"
   },
   "U-HTtW5jrA7": {
     "id": "U-HTtW5jrA7",
@@ -19,7 +20,8 @@
     "teams": ["T-Z4ijiEVH4"],
     "avatar": "http://localhost:8000/files/avatar/U-HTtW5jrA7.jpeg",
     "createdTime": 1653589513232,
-    "updatedTime": 1653589513232
+    "updatedTime": 1653589513232,
+    "workspaceUrl": "alexworkspace.slack.com"
   },
   "U-zcnTpvyLO": {
     "id": "U-zcnTpvyLO",
@@ -29,6 +31,7 @@
     "timeZone": "",
     "teams": ["T-Z4ijiEVH4"],
     "createdTime": 1653589513242,
-    "updatedTime": 1653589513242
+    "updatedTime": 1653589513242,
+    "workspaceUrl": "michaelschneiderworkspace.slack.com"
   }
 }
