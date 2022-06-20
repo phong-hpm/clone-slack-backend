@@ -1,0 +1,44 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Deploy api.slack-clone.cf
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  setup:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup nodeJS 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+
+  clear-cache:
+    runs-on: self-hosted
+    needs: setup
+
+    steps:
+      - name: Clear Cache
+        run: npm cache clean --force
+
+  install:
+    runs-on: self-hosted
+    needs: clear-cache
+
+    steps:
+      - name: Install node_modules
+        run: yarn
+
+  start:
+    runs-on: self-hosted
+    needs: install
+
+    steps:
+      - name: Start
+        run: pm2 start npm --name="api.slack-clone.cf" -- start

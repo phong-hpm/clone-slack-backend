@@ -169,7 +169,7 @@
     },
     "creator": "U-o29OsxUsn",
     "team": "T-Z4ijiEVH4",
-    "avatar": "http://localhost:8000/files/avatar/U-HTtW5jrA7.jpeg",
+    "avatar": "https://api.slack-clone.cf/files/avatar/U-HTtW5jrA7.jpeg",
     "createdTime": 1654576759037,
     "updatedTime": 1654576759047
   }

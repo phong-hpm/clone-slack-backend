@@ -218,9 +218,7 @@
     "reactions": {
       "white_check_mark": {
         "id": "white_check_mark",
-        "users": [
-          "U-o29OsxUsn"
-        ],
+        "users": ["U-o29OsxUsn"],
         "count": 1
       }
     },
@@ -432,9 +430,7 @@
     "reactions": {
       "eyes": {
         "id": "eyes",
-        "users": [
-          "U-o29OsxUsn"
-        ],
+        "users": ["U-o29OsxUsn"],
         "count": 1
       }
     },
@@ -520,10 +516,7 @@
     "reactions": {
       "raised_hands": {
         "id": "raised_hands",
-        "users": [
-          "U-HTtW5jrA7",
-          "U-o29OsxUsn"
-        ],
+        "users": ["U-HTtW5jrA7", "U-o29OsxUsn"],
         "count": 2
       }
     },
@@ -550,16 +543,12 @@
     "reactions": {
       "raised_hands": {
         "id": "raised_hands",
-        "users": [
-          "U-o29OsxUsn"
-        ],
+        "users": ["U-o29OsxUsn"],
         "count": 1
       },
       "white_check_mark": {
         "id": "white_check_mark",
-        "users": [
-          "U-o29OsxUsn"
-        ],
+        "users": ["U-o29OsxUsn"],
         "count": 1
       }
     },
@@ -600,9 +589,7 @@
     "reactions": {
       "white_check_mark": {
         "id": "white_check_mark",
-        "users": [
-          "U-o29OsxUsn"
-        ],
+        "users": ["U-o29OsxUsn"],
         "count": 1
       }
     },
@@ -621,12 +608,12 @@
     "files": [
       {
         "id": "F-5af588d5-f321-41d5-a4a4-83caab0a98cf",
-        "url": "http://localhost:8000/files/video/V-E3ED5D5B-D189-4E35-9B51-D3A0D6317294.mp4",
+        "url": "https://api.slack-clone.cf/files/video/V-E3ED5D5B-D189-4E35-9B51-D3A0D6317294.mp4",
         "type": "video",
         "size": 71095407,
         "mineType": "video/webm",
         "duration": 512,
-        "thumb": "http://localhost:8000/files/image/I-7B3B6CA1-8F82-41CB-A3DE-7EAD8FC8021E.jpeg",
+        "thumb": "https://api.slack-clone.cf/files/image/I-7B3B6CA1-8F82-41CB-A3DE-7EAD8FC8021E.jpeg",
         "status": "done",
         "ratio": "0.5625",
         "scripts": [

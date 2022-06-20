@@ -7,6 +7,7 @@ import express from "express";
 import { createServer } from "http";
 import bodyParser from "body-parser";
 import cors from "cors";
+import helmet, { HelmetOptions } from "helmet";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 
@@ -39,24 +40,46 @@ app.use((req, res, next) => {
   next();
 });
 
+// HELMET
+const helmetOptions: HelmetOptions = {
+  xssFilter: true,
+  referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+  crossOriginOpenerPolicy: true,
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+};
+if (process.env.NODE_ENV === "production") {
+  helmetOptions.crossOriginResourcePolicy = true;
+}
+
+app.use(helmet(helmetOptions));
+
 // CORS
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:3000",
+    origin:
+      process.env.NODE_ENV === "production" ? "https://slack-clone.cf" : "http://localhost:3000",
     allowedHeaders: ["content-type", "x-access-token"],
   })
+);
+
+console.log(
+  process.env.NODE_ENV === "production" ? "https://slack-clone.cf" : "http://localhost:3000"
 );
 
 // cookies
 app.use(cookieParser("cookie_secret", {}));
 
 // delay for testing
-app.use((req, res, next) => {
-  setTimeout(() => next(), Math.random() * Number(process.env.DELAY_API));
-});
+if (process.env.NODE_ENV === "development") {
+  app.use((req, res, next) => {
+    setTimeout(() => next(), Math.random() * Number(process.env.DELAY_API));
+  });
+}
+
+app.use("/ping", (req, res) => res.send("pong"));
 
 // routers
 app.use(routes);
 
-httpServer.listen(8000);
+httpServer.listen(8081);

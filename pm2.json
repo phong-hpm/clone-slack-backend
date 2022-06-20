@@ -1,0 +1,10 @@
+{
+  "apps": [
+    {
+      "name": "api.slack-clone.cf",
+      "script": "npm",
+      "args": "server",
+      "port": 8080
+    }
+  ]
+}

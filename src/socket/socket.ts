@@ -54,7 +54,11 @@ const logger = (socket: SocketType, next: () => void) => {
 
 export const setupSocket = (httpServer: HttpServer) => {
   global.io = new Server(httpServer, {
-    cors: { origin: "http://localhost:3000", credentials: true },
+    cors: {
+      origin:
+        process.env.NODE_ENV === "production" ? "https://slack-clone.cf" : "http://localhost:3000",
+      credentials: true,
+    },
   });
 
   global.io.teams = {};
