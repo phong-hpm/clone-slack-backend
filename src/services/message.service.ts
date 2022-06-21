@@ -129,10 +129,8 @@ const remove = async (id: string, { channelId }: { channelId: string }) => {
   return { messageId: id, channel };
 };
 
-const removeFile = async (
-  id: string,
-  { channelId, fileId }: { channelId: string; fileId: string }
-) => {
+const removeFile = async (id: string, data: { fileId: string; channelId: string }) => {
+  const { fileId, channelId } = data;
   const { message, file } = await messageModel.removeFile(id, fileId);
   if (file) fileService.remove(file);
 
@@ -146,26 +144,33 @@ const removeFile = async (
 
 const updateFileStatus = async (
   id: string,
-  { fileId, status }: { fileId: string; status: MessageFileType["status"] }
+  data: { fileId: string; updatedTime?: number } & Pick<MessageFileType, "status">
 ) => {
-  return messageModel.updateFile(id, { fileId, status });
+  const { fileId, status, updatedTime } = data;
+  return messageModel.updateFile(id, { fileId, status, updatedTime });
 };
 
-const updateFileUrl = async (id: string, { fileId, url }: { fileId: string; url: string }) => {
-  return messageModel.updateFile(id, { fileId, url });
+const updateFileUrl = async (
+  id: string,
+  data: { fileId: string; updatedTime?: number } & Pick<MessageFileType, "url" | "ratio">
+) => {
+  const { fileId, url, updatedTime, ratio } = data;
+  return messageModel.updateFile(id, { fileId, url, updatedTime, ratio, status: "done" });
 };
 
 const updateFileThumbnail = async (
   id: string,
-  { fileId, thumb }: { fileId: string; thumb: string }
+  data: { fileId: string; updatedTime?: number } & Pick<MessageFileType, "thumb">
 ) => {
-  return messageModel.updateFile(id, { fileId, thumb });
+  const { fileId, thumb, updatedTime } = data;
+  return messageModel.updateFile(id, { fileId, thumb, updatedTime });
 };
 
 const updateFileThumbList = async (
   id: string,
-  { fileId, thumbList }: { fileId: string; thumbList: string[] }
+  data: { fileId: string; updatedTime?: number } & Pick<MessageFileType, "thumbList">
 ) => {
+  const { fileId, thumbList, updatedTime } = data;
   const message = await messageModel.getById(id);
   const file = message.files.find((f) => f.id === fileId);
 
@@ -173,6 +178,7 @@ const updateFileThumbList = async (
   return messageModel.updateFile(id, {
     fileId,
     thumbList: [...file.thumbList, ...thumbList],
+    updatedTime,
   });
 };
 

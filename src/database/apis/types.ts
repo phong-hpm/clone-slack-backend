@@ -76,9 +76,10 @@ export interface MessageFileType {
   id: string;
   url: string;
   createdTime: number;
-  type: "audio" | "video";
-  mineType: "audio/webm" | "video/webm";
-  duration: number;
+  updatedTime: number;
+  type: "audio" | "video" | "image";
+  mineType: "audio/webm" | "video/webm" | "image/png";
+  duration?: number;
   size?: number;
   wavePeaks?: number[];
   scripts?: TranScriptType[];

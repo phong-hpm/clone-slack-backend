@@ -20,5 +20,6 @@ export interface InputFileType {
   name: string;
   mimetype: "video/webm" | "audio/webm" | "json/image";
   data: Buffer;
+  type: "video" | "audio" | "image" | "thumb";
   mineType: string;
 }

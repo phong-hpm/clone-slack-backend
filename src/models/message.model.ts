@@ -61,7 +61,7 @@ const updateReaction = async (
 };
 
 const updateFile = async (id: string, data: Partial<MessageFileType> & { fileId: string }) => {
-  const { fileId, url, thumb, thumbList, status } = data;
+  const { fileId, url, thumb, thumbList, status, updatedTime, ratio } = data;
   const message = await messagesTable.readById(id);
   const fileList = message.files;
   const file = fileList.find((f) => f.id === fileId);
@@ -70,8 +70,9 @@ const updateFile = async (id: string, data: Partial<MessageFileType> & { fileId:
   if (thumb) file.thumb = thumb;
   if (thumbList) file.thumbList = thumbList;
   if (status) file.status = status;
+  if (ratio) file.ratio = ratio;
 
-  return messagesTable.update(id, { files: fileList });
+  return messagesTable.update(id, { files: fileList, updatedTime });
 };
 
 const remove = async (id: string) => {

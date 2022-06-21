@@ -1,5 +1,6 @@
 import fs from "fs";
 import { URL } from "url";
+import imageSize from "image-size";
 import { Readable } from "stream";
 
 import { InputFileType } from "@services/types";
@@ -9,15 +10,17 @@ import { generateId } from "@utils/generateId";
 export const mimeType = {
   VIDEO: "video/webm",
   AUDIO: "audio/webm",
+  IMAGE: "imgage/png",
   THUMB: "imgage/png",
   JSON: "application/json",
 };
-export const typePaths = { VIDEO: "video", AUDIO: "audio", THUMB: "thumb" };
-export const fileExtension = { VIDEO: "mp4", AUDIO: "wav", THUMB: "png" };
+export const typePaths = { VIDEO: "video", AUDIO: "audio", IMAGE: "image", THUMB: "thumb" };
+export const fileExtension = { VIDEO: "mp4", AUDIO: "wav", IMAGE: "png", THUMB: "png" };
 
 const getExtensionByType = (type: string) => {
   if (type === typePaths.VIDEO) return fileExtension.VIDEO;
   if (type === typePaths.AUDIO) return fileExtension.AUDIO;
+  if (type === typePaths.IMAGE) return fileExtension.IMAGE;
   if (type === typePaths.THUMB) return fileExtension.THUMB;
   return null;
 };
@@ -51,12 +54,17 @@ const upload = async (file: InputFileType) => {
   const folderPath = `${process.cwd()}/src/_files`;
   let typePath = "";
   let fileName = "";
+  let ratio = 0;
 
-  if (file.mimetype === "video/webm") {
+  if (file.type === "video") {
     typePath = typePaths.VIDEO;
-  } else if (file.mimetype === "audio/webm") {
+  } else if (file.type === "audio") {
     typePath = typePaths.AUDIO;
-  } else if (file.mimetype.split("/")[0] === "image") {
+  } else if (file.type === "image") {
+    typePath = typePaths.IMAGE;
+    const { width, height } = imageSize(file.data);
+    ratio = height / width;
+  } else if (file.type === "thumb") {
     typePath = typePaths.THUMB;
   }
 
@@ -76,7 +84,7 @@ const upload = async (file: InputFileType) => {
 
     if (process.env.NODE_ENV === "development") await global.delay(500);
 
-    return { id: file.name, url, type: typePath };
+    return { id: file.name, url, type: typePath, ratio };
   }
   return null;
 };
