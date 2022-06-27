@@ -4,6 +4,16 @@ import filesController from "@controllers/file.controller";
 
 const router = Router({ mergeParams: true });
 
+router.use((req, res, next) => {
+  const maxAge = Number(process.env.CACHE_DAYS) * 86400;
+  res.set({
+    "Cache-Control": `public, max-age=${maxAge}`,
+    Expires: new Date(Date.now() + maxAge * 1000).toUTCString(),
+  });
+
+  next();
+});
+
 router.get("/marketing/:page/:type/:fileName", filesController.getMarketingFile);
 router.get("/avatar/:fileName", filesController.getAvatar);
 router.get("/image/:fileName", filesController.getImage);

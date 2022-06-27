@@ -41,17 +41,16 @@ app.use((req, res, next) => {
 });
 
 // HELMET
-const helmetOptions: HelmetOptions = {
-  xssFilter: true,
-  referrerPolicy: { policy: "strict-origin-when-cross-origin" },
-  crossOriginOpenerPolicy: true,
-  crossOriginResourcePolicy: { policy: "cross-origin" },
-};
 if (process.env.NODE_ENV === "production") {
-  helmetOptions.crossOriginResourcePolicy = true;
-}
+  const helmetOptions: HelmetOptions = {
+    xssFilter: true,
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+    crossOriginOpenerPolicy: true,
+    crossOriginResourcePolicy: true,
+  };
 
-app.use(helmet(helmetOptions));
+  app.use(helmet(helmetOptions));
+}
 
 // CORS
 app.use(
@@ -61,10 +60,6 @@ app.use(
       process.env.NODE_ENV === "production" ? "https://slack-clone.cf" : "http://localhost:3000",
     allowedHeaders: ["content-type", "x-access-token"],
   })
-);
-
-console.log(
-  process.env.NODE_ENV === "production" ? "https://slack-clone.cf" : "http://localhost:3000"
 );
 
 // cookies

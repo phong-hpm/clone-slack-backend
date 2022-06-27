@@ -1,6 +1,31 @@
 import { Low, JSONFile } from "lowdb";
 import { join } from "path";
 
+const domainRegExp = new RegExp(`^https://api.slack-clone.cf.+`);
+
+// support for developlent
+const updateUrlDomain = <T>(data: T) => {
+  if (!data || typeof data !== "object") return data;
+
+  let result: T;
+  if (Array.isArray(data)) {
+    result = data.map((item) => updateUrlDomain(item)) as unknown as T;
+  } else {
+    result = { ...data };
+    const keys = Object.keys(data);
+
+    keys.forEach((key) => {
+      if (typeof result[key] === "object") {
+        result[key] = updateUrlDomain(result[key]);
+      } else if (domainRegExp.test(result[key])) {
+        result[key] = result[key].replace("https://api.slack-clone.cf", "http://localhost:8081");
+      }
+    });
+  }
+
+  return result;
+};
+
 export const tableApis = <DataType>(tableName: string) => {
   const jsonPath = `${process.cwd()}/src/database/json`;
   const db = new Low<Record<string, DataType>>(new JSONFile(join(jsonPath, `${tableName}.json`)));
@@ -30,6 +55,10 @@ export const tableApis = <DataType>(tableName: string) => {
       }
     }
 
+    if (process.env.NODE_ENV === "development") {
+      return updateUrlDomain(result);
+    }
+
     return result;
   };
 
@@ -41,6 +70,11 @@ export const tableApis = <DataType>(tableName: string) => {
     const table = await read();
     const data = table[id];
     if (!data) throw new Error(`[readById] - [${tableName}] failled, '${id}' not existed`);
+
+    if (process.env.NODE_ENV === "development") {
+      return updateUrlDomain(data);
+    }
+
     return data;
   };
 
