@@ -56,8 +56,7 @@ if (process.env.NODE_ENV === "production") {
 app.use(
   cors({
     credentials: true,
-    origin:
-      process.env.NODE_ENV === "production" ? "https://slack-clone.cf" : "http://localhost:3000",
+    origin: '*',
     allowedHeaders: ["content-type", "x-access-token"],
   })
 );
