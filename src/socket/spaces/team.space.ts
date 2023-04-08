@@ -1,3 +1,5 @@
+import { IoType } from "@socket/types";
+
 import teamsService from "@services/team.service";
 import channelService from "@services/channel.service";
 import userService from "@services/user.service";
@@ -24,19 +26,19 @@ export class IoTeamData {
   team: IoTeamType;
 
   constructor({ teamId, socket }: { teamId: string; socket?: SocketType }) {
-    if (!global.io) throw new Error("io instance is null");
+    if (!(global as any).io) throw new Error("io instance is null");
     // initiate data if it haven't existed
-    if (!global.io.teams[teamId]) {
+    if (!(global as any).io.teams[teamId]) {
       // initiate ioTeam data if its haven't exited
-      global.io.teams[teamId] = { channels: {}, userSocketIds: {} };
+      (global as any).io.teams[teamId] = { channels: {}, userSocketIds: {} };
     }
     // initiate socketUser to userSocketIds
-    if (socket) global.io.teams[teamId].userSocketIds[socket.userId] = socket.id;
+    if (socket) (global as any).io.teams[teamId].userSocketIds[socket.userId] = socket.id;
 
     this.spaceName = `/${teamId}`;
     this.teamId = teamId;
     this.socket = socket;
-    this.team = global.io.teams[this.teamId];
+    this.team = (global as any).io.teams[this.teamId];
   }
 
   getSocketId(userId: string) {
@@ -60,7 +62,7 @@ export class IoTeamData {
 }
 
 const teamSocketHandler = () => {
-  const io = global.io;
+  const io = (global as any).io as IoType;
   const workspace = io.of(/^\/T-[a-zA-Z0-9]+$/);
 
   workspace.on(SocketEventDefault.CONNECTION, (socket: SocketType) => {

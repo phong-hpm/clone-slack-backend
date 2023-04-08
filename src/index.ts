@@ -1,7 +1,3 @@
-// global types
-import "src/type.global";
-
-//
 import dotEnv from "dotenv";
 import express from "express";
 import { createServer } from "http";
@@ -53,7 +49,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // CORS
-const whiteList = JSON.parse(process.env.FRONDEND_DOMAIN);
+const whiteList = JSON.parse(process.env.WHITE_LIST);
 app.use(
   cors({
     credentials: true,

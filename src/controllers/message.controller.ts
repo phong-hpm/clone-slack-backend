@@ -165,7 +165,7 @@ const uploadMessageWithFiles: RequestHandlerCustom = async (req, res) => {
     else res.send({ ok: true, status: "uploading" });
 
     const socketNamespace = `/${teamId}/${channelId}`;
-    const io = global.io;
+    const io = (global as any).io;
     const socketSpace = io.of(socketNamespace);
 
     // add new message
