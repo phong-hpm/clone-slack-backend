@@ -53,11 +53,17 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // CORS
+const whiteList = JSON.parse(process.env.FRONDEND_DOMAIN);
 app.use(
   cors({
     credentials: true,
-    origin:
-      process.env.NODE_ENV === "production" ? "https://slack-clone.cf" : "http://localhost:3000",
+    origin: function (origin, callback) {
+      if (whiteList.indexOf(origin) !== -1) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+    },
     allowedHeaders: ["content-type", "x-access-token"],
   })
 );
