@@ -50,6 +50,7 @@ if (process.env.NODE_ENV === "production") {
 
 // CORS
 const whiteList = JSON.parse(process.env.WHITE_LIST);
+console.log('whiteList')
 app.use(
   cors({
     credentials: true,
